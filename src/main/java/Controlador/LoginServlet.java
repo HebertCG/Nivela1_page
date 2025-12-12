@@ -25,29 +25,43 @@ public class LoginServlet extends HttpServlet {
         UsuarioDAO dao = new UsuarioDAO();
         Usuario usuario = dao.login(correo, password);
 
-       if (usuario != null) {
+        if (usuario != null) {
 
-    HttpSession session = request.getSession();
-    session.setAttribute("usuario", usuario);
+            HttpSession session = request.getSession();
+            session.setAttribute("usuario", usuario);
 
-    String nombreRol = dao.obtenerNombreRol(usuario.getIdRol());
-    session.setAttribute("nombreRol", nombreRol);
-    
+            String nombreRol = dao.obtenerNombreRol(usuario.getIdRol());
+            session.setAttribute("nombreRol", nombreRol);
 
-    switch (nombreRol) {
-        case "administrador":
-            response.sendRedirect("admin/panel.jsp");
-            break;
-        case "docente":
-            response.sendRedirect("docente/panel.jsp");
-            break;
-        case "estudiante":
-            response.sendRedirect("estudiante/panel.jsp");
-            break;
-        default:
-            session.invalidate();
-            response.sendRedirect("login.jsp?error=rol");
-    }
-}
+            // Para evitar problemas de mayúsculas/minúsculas
+            String rol = nombreRol != null ? nombreRol.toLowerCase() : "";
+
+            String ctx = request.getContextPath();
+
+            switch (rol) {
+                case "administrador":
+                    // Si luego quieres, también puedes pasar esto por un servlet AdminPanel
+                    response.sendRedirect(ctx + "/admin/panel.jsp");
+                    break;
+
+                case "docente":
+                    // IMPORTANTE: ir al servlet, NO al JSP
+                    response.sendRedirect(ctx + "/Docente/Panel");
+                    break;
+
+                case "estudiante":
+                    // Igual que admin, podrías luego moverlo a un servlet EstudiantePanel
+                    response.sendRedirect(ctx + "/estudiante/panel.jsp");
+                    break;
+
+                default:
+                    session.invalidate();
+                    response.sendRedirect(ctx + "/login.jsp?error=rol");
+                    break;
+            }
+        } else {
+            // Aquí podrías manejar error de credenciales si lo necesitas
+            response.sendRedirect(request.getContextPath() + "/login.jsp?error=login");
+        }
     }
 }

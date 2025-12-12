@@ -270,7 +270,7 @@
             
             <p class="login-prompt">Ingresa tus datos para <a href="#">iniciar sesión</a>.</p>
             
-            <form action="LoginServlet" method="post">
+            <form action="${pageContext.request.contextPath}/LoginServlet" method="post">
                 <div class="mb-3">
                     <label for="correo" class="form-label">Correo</label>
                     <input type="email" class="form-control" id="correo" name="correo" required placeholder="Ingresa tu usuario" />
