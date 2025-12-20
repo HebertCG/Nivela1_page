@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/rechazarPreinscripcion")
+@WebServlet("/RechazarPreinscripcion")
 public class RechazarPreinscripcionServlet extends HttpServlet {
     private PreinscripcionDAO dao = new PreinscripcionDAO();
 
@@ -16,6 +16,6 @@ public class RechazarPreinscripcionServlet extends HttpServlet {
             dao.actualizarEstado(dni, "rechazado");
         }
 
-        response.sendRedirect("listarPendientes");
+        response.sendRedirect(request.getContextPath() + "/ListarPreinscripciones?mensaje=rechazado");
     }
 }

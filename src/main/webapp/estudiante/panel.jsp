@@ -1,4 +1,4 @@
-Ôªø<%@ page import="modelo.Usuario" %>
+<%@ page import="modelo.Usuario" %>
   <%@ page session="true" %>
     <%@ page import="DAO.UsuarioDAO" %>
       <%@ page import="DAO.EstudianteDAO" %>
@@ -305,79 +305,73 @@
                                                       </div>
                                                     </c:otherwise>
                                                   </c:choose>
-                                                </div>
-
+                                                
                                                 <div class="section-card mt-4">
-                                                  <h5 class="section-title">Asistencia del d√≠a</h5>
+                                                  <h5 class="section-title">Asistencia del DÌa</h5>
                                                   <div class="attendance-list">
                                                     <div class="attendance-item"><span>Lunes, 3 de noviembre</span><span
                                                         class="attendance-status status-success"><i
-                                                          class="bi bi-check-circle"></i> Asisti√≥</span></div>
+                                                          class="bi bi-check-circle"></i> AsistiÛ</span></div>
                                                     <div class="attendance-item"><span>Domingo, 2 de
                                                         noviembre</span><span
                                                         class="attendance-status status-success"><i
-                                                          class="bi bi-check-circle"></i> Asisti√≥</span></div>
-                                                    <div class="attendance-item"><span>S√°bado, 1 de
+                                                          class="bi bi-check-circle"></i> AsistiÛ</span></div>
+                                                    <div class="attendance-item"><span>S·bado, 1 de
                                                         noviembre</span><span
                                                         class="attendance-status status-warning"><i
                                                           class="bi bi-dash-circle"></i> Sin registro</span></div>
                                                     <div class="attendance-item"><span>Viernes, 31 de
                                                         octubre</span><span class="attendance-status status-success"><i
-                                                          class="bi bi-check-circle"></i> Asisti√≥</span></div>
+                                                          class="bi bi-check-circle"></i> AsistiÛ</span></div>
                                                     <div class="attendance-item"><span>Jueves, 30 de octubre</span><span
                                                         class="attendance-status status-danger"><i
                                                           class="bi bi-x-circle"></i> Falta</span></div>
-                                                    <div class="attendance-item"><span>Mi√©rcoles, 29 de
-                                                        octubre</span><span class="attendance-status status-success"><i
-                                                          class="bi bi-check-circle"></i> Asisti√≥</span></div>
-                                                    <div class="attendance-item"><span>Martes, 28 de octubre</span><span
-                                                        class="attendance-status status-success"><i
-                                                          class="bi bi-check-circle"></i> Asisti√≥</span></div>
                                                   </div>
                                                 </div>
                                               </div>
+</div>
 
-                                              <div class="col-12 col-lg-4">
-                                                <div class="section-card">
-                                                  <h5 class="section-title">Anuncios</h5>
-                                                  <div class="announcement-card shadow-sm">
-                                                    <img
-                                                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=60"
-                                                      alt="Cursos de verano">
-                                                    <div class="card-body">
-                                                      <h6>¬°Nuevos cursos de verano!</h6>
-                                                      <p>Aprovecha el 30% de descuento en todos los cursos intensivos.
-                                                      </p>
-                                                      <a href="#">Explorar cursos <i
-                                                          class="bi bi-box-arrow-up-right"></i></a>
+                                                <div class="col-12 col-lg-4">
+                                                  <div class="section-card">
+                                                    <h5 class="section-title">Anuncios</h5>
+                                                    <div class="announcement-card shadow-sm">
+                                                      <img
+                                                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=60"
+                                                        alt="Cursos de verano">
+                                                      <div class="card-body">
+                                                        <h6>°Nuevos cursos de verano!</h6>
+                                                        <p>Aprovecha el 30% de descuento en todos los cursos intensivos.
+                                                        </p>
+                                                        <a href="#">Explorar cursos <i
+                                                            class="bi bi-box-arrow-up-right"></i></a>
+                                                      </div>
                                                     </div>
-                                                  </div>
-                                                  <div class="announcement-card shadow-sm">
-                                                    <img
-                                                      src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=600&q=60"
-                                                      alt="Certificaciones">
-                                                    <div class="card-body">
-                                                      <h6>Certificaciones profesionales</h6>
-                                                      <p>Obt√©n certificados reconocidos internacionalmente y destaca.
-                                                      </p>
-                                                      <a href="#">M√°s informaci√≥n <i
-                                                          class="bi bi-arrow-up-right"></i></a>
+                                                    <div class="announcement-card shadow-sm">
+                                                      <img
+                                                        src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=600&q=60"
+                                                        alt="Certificaciones">
+                                                      <div class="card-body">
+                                                        <h6>Certificaciones profesionales</h6>
+                                                        <p>ObtÈn certificados reconocidos internacionalmente y destaca.
+                                                        </p>
+                                                        <a href="#">M·s informaciÛn <i
+                                                            class="bi bi-arrow-up-right"></i></a>
+                                                      </div>
                                                     </div>
-                                                  </div>
-                                                  <div class="announcement-card shadow-sm mb-0">
-                                                    <img
-                                                      src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=60"
-                                                      alt="Descuentos">
-                                                    <div class="card-body">
-                                                      <h6>Descuentos estudiantes</h6>
-                                                      <p>Presenta tu credencial y accede a beneficios exclusivos.</p>
-                                                      <a href="#">Saber m√°s <i class="bi bi-arrow-right"></i></a>
+                                                    <div class="announcement-card shadow-sm mb-0">
+                                                      <img
+                                                        src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=60"
+                                                        alt="Descuentos">
+                                                      <div class="card-body">
+                                                        <h6>Descuentos estudiantes</h6>
+                                                        <p>Presenta tu credencial y accede a beneficios exclusivos.</p>
+                                                        <a href="#">Saber m·s <i class="bi bi-arrow-right"></i></a>
+                                                      </div>
                                                     </div>
                                                   </div>
                                                 </div>
-                                              </div>
 
-                                            </div>
+                                              </div>
                                           </main>
                                       </div>
                                   </div>

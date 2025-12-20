@@ -1,4 +1,4 @@
-Ôªø<%@ page import="modelo.Usuario" %>
+<%@ page import="modelo.Usuario" %>
     <%@ page session="true" %>
         <%@ page import="DAO.UsuarioDAO" %>
             <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -47,7 +47,7 @@
                                         display: flex;
                                         flex-direction: column;
                                         background: var(--color-bg);
-                                    }
+                                        margin-left: 280px;    transition: margin-left 0.3s ease;    min-height: 100vh;}
 
                                     .dashboard-main {
                                         flex: 1;
@@ -59,12 +59,245 @@
                                             padding: 1.5rem 1rem 2rem;
                                         }
                                     }
+                                    .estudiante-sidebar[data-collapsed="true"] ~ .content-wrapper {
+                                        margin-left: 80px;
+                                    }
+
+                                    @media (max-width: 991.98px) {
+                                        .content-wrapper {
+                                            margin-left: 0 !important;
+                                        }
+                                    }
+
+/* Schedule/Horario Styles */
+.schedule-hero {
+    margin-bottom: 2rem;
+}
+
+.schedule-hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+.schedule-wrapper {
+    background: var(--color-surface);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 60px repeat(6, 1fr);
+    gap: 0;
+    position: relative;
+    overflow-x: auto;
+}
+
+.schedule-hours {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--color-border);
+    padding-right: 0.5rem;
+}
+
+.hour-slot {
+    height: 64px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    padding-top: 0.25rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.schedule-days {
+    display: contents;
+}
+
+.schedule-day {
+    border-right: 1px solid var(--color-border);
+    position: relative;
+}
+
+.schedule-day:last-child {
+    border-right: none;
+}
+
+.day-header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 2px solid var(--color-border);
+    background: #f9fafb;
+}
+
+.day-header.is-today {
+    background: #dbeafe;
+    color: #1e40af;
+    font-weight: 700;
+}
+
+.day-body {
+    position: relative;
+    background: white;
+}
+
+.schedule-events {
+    display: none;
+}
+
+.schedule-event {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    border-radius: 8px;
+    padding: 0.5rem;
+    color: white;
+    font-size: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-event:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.schedule-event--teal {
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+}
+
+.schedule-event--cyan {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.schedule-event--purple {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.event-code {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.event-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.25rem 0;
+}
+
+.event-time {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.schedule-legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legend-dot.teal {
+    background: #14b8a6;
+}
+
+.legend-dot.cyan {
+    background: #06b6d4;
+}
+
+.legend-dot.purple {
+    background: #8b5cf6;
+}
+
+.section-card {
+    background: var(--color-surface);
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+    padding: 2rem;
+}
+
+.btn-secondary {
+    background: #6B7280;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #4B5563;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 991.98px) {
+    .schedule-grid {
+        grid-template-columns: 50px repeat(6, minmax(100px, 1fr));
+    }
+    
+    .schedule-event {
+        font-size: 0.65rem;
+        padding: 0.35rem;
+    }
+    
+    .event-code {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .schedule-grid {
+        grid-template-columns: 40px repeat(6, minmax(80px, 1fr));
+    }
+    
+    .hour-slot {
+        font-size: 0.65rem;
+    }
+    
+    .day-header {
+        font-size: 0.75rem;
+        height: 40px;
+    }
+}
+
                                 </style>
                             </head>
 
                             <body>
                                 <c:set var="days"
-                                    value="${fn:split('Lunes,Martes,Mi√©rcoles,Jueves,Viernes,S√°bado', ',')}"></c:set>
+                                    value="${fn:split('Lunes,Martes,MiÈrcoles,Jueves,Viernes,S·bado', ',')}"></c:set>
                                 <c:set var="colors" value="${fn:split('teal,cyan,purple', ',')}"></c:set>
                                 <c:set var="hourStart" value="7" />
                                 <c:set var="hourEnd" value="20" />
@@ -121,7 +354,7 @@
                                                                                     ${clase.curso}</p>
                                                                                 <h6 class="event-name mb-1">
                                                                                     ${clase.seccion != null ?
-                                                                                    clase.seccion : 'Secci√≥n A'}</h6>
+                                                                                    clase.seccion : 'SecciÛn A'}</h6>
                                                                                 <p class="event-time mb-0">
                                                                                     ${clase.horaInicio} -
                                                                                     ${clase.horaFin}</p>
@@ -134,10 +367,10 @@
                                                                 <div class="schedule-legend mt-3">
                                                                     <div class="legend-item">
                                                                         <span class="legend-dot teal"></span>
-                                                                        Matem√°ticas
+                                                                        Matem·ticas
                                                                     </div>
                                                                     <div class="legend-item">
-                                                                        <span class="legend-dot cyan"></span> F√≠sica
+                                                                        <span class="legend-dot cyan"></span> FÌsica
                                                                     </div>
                                                                     <div class="legend-item">
                                                                         <span class="legend-dot purple"></span>
@@ -150,7 +383,7 @@
                                                             <div class="section-card text-center">
                                                                 <h5>No se encontraron horarios activos</h5>
                                                                 <p class="text-muted mb-0">Cuando tengas clases
-                                                                    asignadas se mostrar√°n aqu√≠.</p>
+                                                                    asignadas se mostrar·n aquÌ.</p>
                                                             </div>
                                                         </c:otherwise>
                                                     </c:choose>

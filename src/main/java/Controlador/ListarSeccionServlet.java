@@ -23,7 +23,7 @@ public class ListarSeccionServlet extends HttpServlet {
         String filtro = request.getParameter("filtroGrupo");
         if (filtro != null && !filtro.isEmpty()) {
             int idGrupoFiltro = Integer.parseInt(filtro);
-            listaS = sDao.listarPorGrupo(idGrupoFiltro);
+            listaS = sDao.listarSeccionesPorGrupo(idGrupoFiltro);
             request.setAttribute("selectedGrupo", idGrupoFiltro);
         } else {
             listaS = sDao.listar();
@@ -40,6 +40,6 @@ public class ListarSeccionServlet extends HttpServlet {
         request.setAttribute("listaG", listaG);
 
         request.getRequestDispatcher("/admin/seccion.jsp")
-               .forward(request, response);
+                .forward(request, response);
     }
 }

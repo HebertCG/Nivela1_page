@@ -8,34 +8,33 @@ import java.util.*;
 public class AdminSeccionDAO {
     public List<SeccionInfo> listarSeccionesCompletas() {
         List<SeccionInfo> lista = new ArrayList<>();
-        String sql =
-          "SELECT "
-        + "  s.id              AS id_seccion, "
-        + "  s.id_grupo        AS id_grupo, "             
-        + "  c.nombre          AS curso, "
-        + "  c.carrera         AS carrera, "
-        + "  CONCAT(u.nombre,' ',u.apellido) AS profesor, "
-        + "  g.nombre          AS grupo, "
-        + "  s.nombre          AS seccion, "
-        + "  h.dia, "
-        + "  h.hora_inicio, "
-        + "  h.hora_fin "
-        + "FROM seccion s "
-        + "JOIN horario h        ON s.id_horario       = h.id "
-        + "JOIN curso_docente cd ON h.id_curso_docente  = cd.id "
-        + "JOIN curso c          ON cd.id_curso         = c.id "
-        + "JOIN usuarios u       ON cd.id_docente       = u.id "
-        + "JOIN grupo g          ON s.id_grupo          = g.id "
-        + "ORDER BY g.nombre, s.nombre, h.dia, h.hora_inicio";
+        String sql = "SELECT "
+                + "  s.id              AS id_seccion, "
+                + "  s.id_grupo        AS id_grupo, "
+                + "  c.nombre          AS curso, "
+                + "  c.carrera         AS carrera, "
+                + "  CONCAT(u.nombre,' ',u.apellido) AS profesor, "
+                + "  g.nombre          AS grupo, "
+                + "  s.nombre          AS seccion, "
+                + "  h.dia, "
+                + "  h.hora_inicio, "
+                + "  h.hora_fin "
+                + "FROM seccion s "
+                + "JOIN horario h        ON s.id_horario       = h.id "
+                + "JOIN curso_docente cd ON h.id_curso_docente  = cd.id "
+                + "JOIN curso c          ON cd.id_curso         = c.id "
+                + "JOIN usuarios u       ON cd.id_docente       = u.id "
+                + "JOIN grupo g          ON s.id_grupo          = g.id "
+                + "ORDER BY g.nombre, s.nombre, h.dia, h.hora_inicio";
 
         try (Connection con = conecct.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 SeccionInfo si = new SeccionInfo();
                 si.setId(rs.getInt("id_seccion"));
-                si.setIdGrupo(rs.getInt("id_grupo"));          
+                si.setIdGrupo(rs.getInt("id_grupo"));
                 si.setCurso(rs.getString("curso"));
                 si.setCarrera(rs.getString("carrera"));
                 si.setProfesor(rs.getString("profesor"));
@@ -51,5 +50,23 @@ public class AdminSeccionDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    /**
+     * Eliminar una sección por ID
+     */
+    public boolean eliminar(int id) {
+        String sql = "DELETE FROM seccion WHERE id = ?";
+
+        try (Connection con = conecct.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

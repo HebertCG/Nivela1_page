@@ -1,7 +1,7 @@
 
 package Controlador;
 
-import DAO.SeccionDAO;
+import DAO.AdminSeccionDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ public class EliminarSeccionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        new SeccionDAO().eliminar(id);
+        new AdminSeccionDAO().eliminar(id);
         response.sendRedirect(request.getContextPath() + "/ListarSeccion");
     }
 }

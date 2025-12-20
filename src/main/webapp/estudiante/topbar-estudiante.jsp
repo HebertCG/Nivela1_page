@@ -1,7 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="modelo.Usuario, java.time.LocalDate, java.time.format.DateTimeFormatter, java.util.Locale" %>
         <% Usuario estudiante=(Usuario) session.getAttribute("usuario"); String nombreEstudiante=(estudiante !=null) ?
-            estudiante.getNombre() + " " + estudiante.getApellido() : "Estudiante" ; String
+            estudiante.getNombre() + " " + estudiante.getApellido() : "Estudiante" ; String primerNombre=(estudiante
+            !=null && estudiante.getNombre() !=null) ? estudiante.getNombre() : "Estudiante" ; String
             inicialEstudiante=(estudiante !=null && estudiante.getNombre() !=null && !estudiante.getNombre().isEmpty())
             ? estudiante.getNombre().substring(0, 1).toUpperCase() : "E" ; LocalDate hoy=LocalDate.now();
             DateTimeFormatter formatter=DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", new Locale("es", "ES"
@@ -203,7 +204,7 @@
                             <%= fechaFormateada %>
                         </p>
                         <h6 class="topbar-greeting">Bienvenido de vuelta, <span class="text-uppercase">
-                                <%= nombreEstudiante %>
+                                <%= primerNombre %>
                             </span></h6>
                     </div>
                 </div>

@@ -308,6 +308,7 @@
                 </div>
             </div>
 
+
             <nav class="sidebar-nav nav flex-column flex-grow-1">
                 <a class="nav-link <%= " dashboard".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
                     href="${pageContext.request.contextPath}/estudiante/panel.jsp"
@@ -331,22 +332,6 @@
                     <span class="nav-indicator"></span>
                     <i class="bi bi-calendar3"></i>
                     <span class="nav-text">Horario</span>
-                </a>
-
-                <a class="nav-link <%= " calificaciones".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
-                    href="${pageContext.request.contextPath}/Estudiante/MisNotas"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Calificaciones">
-                    <span class="nav-indicator"></span>
-                    <i class="bi bi-bar-chart-line"></i>
-                    <span class="nav-text">Calificaciones</span>
-                </a>
-
-                <a class="nav-link <%= " asistencias".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
-                    href="${pageContext.request.contextPath}/Estudiante/Asistencia"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Asistencias">
-                    <span class="nav-indicator"></span>
-                    <i class="bi bi-award"></i>
-                    <span class="nav-text">Asistencias</span>
                 </a>
             </nav>
 
