@@ -9,6 +9,7 @@
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link rel="icon" type="image/png" href="img/LOGOS.png" />
                     <title>Panel Administrador</title>
                     <link rel="stylesheet"
                         href="${pageContext.request.contextPath}/assets/bootstrap/css/bootstrap.min.css">

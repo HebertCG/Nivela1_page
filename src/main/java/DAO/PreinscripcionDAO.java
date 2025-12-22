@@ -32,16 +32,7 @@ public class PreinscripcionDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Preinscripcion p = new Preinscripcion();
-                p.setId(rs.getInt("id"));
-                p.setNombres(rs.getString("nombre"));
-                p.setApellidos(rs.getString("apellido"));
-                p.setDni(rs.getString("dni"));
-                p.setMontoTotal(rs.getDouble("monto_total"));
-                p.setMontoPagado(rs.getDouble("monto_pagado"));
-                p.setSaldoPendiente(rs.getDouble("saldo_pendiente"));
-                p.setModalidadPago(rs.getString("modalidad_pago"));
-                return p;
+                return mapearPreinscripcion(rs);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,8 +85,8 @@ public class PreinscripcionDAO {
             if (idExistente == 0) {
                 // INSERT NUEVO
                 String sqlPre = "INSERT INTO preinscripcion "
-                        + "(nombre, apellido, dni, email, direccion, colegio, carrera, estado) "
-                        + "VALUES (?,?,?,?,?,?,?, 'pendiente')";
+                        + "(nombre, apellido, dni, email, direccion, colegio, estado) "
+                        + "VALUES (?,?,?,?,?,?, 'pendiente')";
                 PreparedStatement ps = con.prepareStatement(sqlPre, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, p.getNombres());
                 ps.setString(2, p.getApellidos());
@@ -103,7 +94,6 @@ public class PreinscripcionDAO {
                 ps.setString(4, p.getCorreo());
                 ps.setString(5, p.getDireccion());
                 ps.setString(6, p.getColegio());
-                ps.setString(7, p.getCarrera());
                 ps.executeUpdate();
 
                 ResultSet rs = ps.getGeneratedKeys();
@@ -113,7 +103,7 @@ public class PreinscripcionDAO {
             } else {
                 // UPDATE EXISTENTE â†’ vuelve a pendiente
                 String sqlUpd = "UPDATE preinscripcion SET "
-                        + "nombre=?, apellido=?, email=?, direccion=?, colegio=?, carrera=?, estado='pendiente' "
+                        + "nombre=?, apellido=?, email=?, direccion=?, colegio=?, estado='pendiente' "
                         + "WHERE id = ?";
                 PreparedStatement psUpd = con.prepareStatement(sqlUpd);
                 psUpd.setString(1, p.getNombres());
@@ -121,8 +111,7 @@ public class PreinscripcionDAO {
                 psUpd.setString(3, p.getCorreo());
                 psUpd.setString(4, p.getDireccion());
                 psUpd.setString(5, p.getColegio());
-                psUpd.setString(6, p.getCarrera());
-                psUpd.setInt(7, idExistente);
+                psUpd.setInt(6, idExistente);
                 psUpd.executeUpdate();
             }
 
@@ -185,7 +174,6 @@ public class PreinscripcionDAO {
                 p.setDni(rs.getString("dni"));
                 p.setDireccion(rs.getString("direccion"));
                 p.setColegio(rs.getString("colegio"));
-                p.setCarrera(rs.getString("carrera"));
                 p.setEstado(rs.getString("estado"));
                 p.setIntentos(rs.getInt("intentos"));
                 p.setNombreApoderado(rs.getString("nombre_apoderado"));
@@ -208,6 +196,18 @@ public class PreinscripcionDAO {
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nuevoEstado);
             ps.setString(2, dni);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void actualizarEstadoPorId(int id, String nuevoEstado) {
+        String sql = "UPDATE preinscripcion SET estado = ? WHERE id = ?";
+        try (Connection con = conecct.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, id);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,9 +272,9 @@ public class PreinscripcionDAO {
         }
     }
 
-    public int insertarPublica(String nombre, String apellido, String dni,
-            String email, String direccion, String colegio, String carrera, String grado,
-            String nombreApoderado, String apellidoApoderado, String emailApoderado,
+    public int insertarPublica(String nombre, String apellido,
+            String email, String direccion, String colegio, String grado,
+            String nombreApoderado, String apellidoApoderado, String dniApoderado, String emailApoderado,
             String telefono1Apoderado, String telefono2Apoderado,
             String modalidadPago, String metodoPago, String referenciaPago, String comprobantePago)
             throws SQLException {
@@ -294,12 +294,13 @@ public class PreinscripcionDAO {
         // Fecha límite para 2da cuota (30 enero 2026)
         java.sql.Date fechaLimite = modalidadPago.equals("cuotas") ? java.sql.Date.valueOf("2026-01-30") : null;
 
-        String sql = "INSERT INTO preinscripcion (nombre, apellido, dni, email, direccion, colegio, carrera, grado, " +
-                "nombre_apoderado, apellido_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, " +
+        String sql = "INSERT INTO preinscripcion (nombre, apellido, email, direccion, colegio, grado, " +
+                "nombre_apoderado, apellido_apoderado, dni_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, "
+                +
                 "modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, " +
                 "monto_total, monto_pagado, saldo_pendiente, estado_pago, fecha_limite_2da_cuota, " +
                 "estado, origen, intentos, seccion_id, intereses, escaneo_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', 'online', 0, NULL, NULL, NULL)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', 'online', 0, NULL, NULL, NULL)";
 
         try (Connection conn = conecct.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -309,26 +310,25 @@ public class PreinscripcionDAO {
 
             ps.setString(1, nombre);
             ps.setString(2, apellido);
-            ps.setString(3, dni);
-            ps.setString(4, email);
-            ps.setString(5, direccion);
-            ps.setString(6, colegio);
-            ps.setString(7, carrera);
-            ps.setString(8, grado);
-            ps.setString(9, nombreApoderado);
-            ps.setString(10, apellidoApoderado);
-            ps.setString(11, emailApoderado);
-            ps.setString(12, telefono1Apoderado);
-            ps.setString(13, telefono2Apoderado);
-            ps.setString(14, modalidadPago);
-            ps.setString(15, metodoPago);
-            ps.setString(16, referenciaPago);
-            ps.setString(17, comprobantePago);
-            ps.setDouble(18, montoTotal);
-            ps.setDouble(19, primeraCuota);
-            ps.setDouble(20, saldoPendiente);
-            ps.setString(21, estadoPago);
-            ps.setDate(22, fechaLimite);
+            ps.setString(3, email);
+            ps.setString(4, direccion);
+            ps.setString(5, colegio);
+            ps.setString(6, grado);
+            ps.setString(7, nombreApoderado);
+            ps.setString(8, apellidoApoderado);
+            ps.setString(9, dniApoderado);
+            ps.setString(10, emailApoderado);
+            ps.setString(11, telefono1Apoderado);
+            ps.setString(12, telefono2Apoderado);
+            ps.setString(13, modalidadPago);
+            ps.setString(14, metodoPago);
+            ps.setString(15, referenciaPago);
+            ps.setString(16, comprobantePago);
+            ps.setDouble(17, montoTotal);
+            ps.setDouble(18, primeraCuota);
+            ps.setDouble(19, saldoPendiente);
+            ps.setString(20, estadoPago);
+            ps.setDate(21, fechaLimite);
 
             int filasAfectadas = ps.executeUpdate();
 
@@ -353,9 +353,9 @@ public class PreinscripcionDAO {
         }
     }
 
-    public boolean insertarManual(String nombre, String apellido, String dni,
-            String email, String direccion, String colegio, String carrera, String grado,
-            String nombreApoderado, String apellidoApoderado, String emailApoderado,
+    public boolean insertarManual(String nombre, String apellido,
+            String email, String direccion, String colegio, String grado,
+            String nombreApoderado, String apellidoApoderado, String dniApoderado, String emailApoderado,
             String telefono1Apoderado, String telefono2Apoderado,
             String modalidadPago, String metodoPago, String referenciaPago, String estadoInicial)
             throws SQLException {
@@ -368,38 +368,38 @@ public class PreinscripcionDAO {
         String estadoPago = modalidadPago.equals("contado") ? "completo" : "pendiente";
         java.sql.Date fechaLimite = modalidadPago.equals("cuotas") ? java.sql.Date.valueOf("2026-01-30") : null;
 
-        String sql = "INSERT INTO preinscripcion (nombre, apellido, dni, email, direccion, colegio, carrera, grado, " +
-                "nombre_apoderado, apellido_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, " +
+        String sql = "INSERT INTO preinscripcion (nombre, apellido, email, direccion, colegio, grado, " +
+                "nombre_apoderado, apellido_apoderado, dni_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, "
+                +
                 "modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, " +
                 "monto_total, monto_pagado, saldo_pendiente, estado_pago, fecha_limite_2da_cuota, " +
                 "estado, origen, intentos) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'manual', 0)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 'manual', 0)";
 
         try (Connection conn = conecct.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, nombre);
             ps.setString(2, apellido);
-            ps.setString(3, dni);
-            ps.setString(4, email);
-            ps.setString(5, direccion);
-            ps.setString(6, colegio);
-            ps.setString(7, carrera);
-            ps.setString(8, grado);
-            ps.setString(9, nombreApoderado);
-            ps.setString(10, apellidoApoderado);
-            ps.setString(11, emailApoderado);
-            ps.setString(12, telefono1Apoderado);
-            ps.setString(13, telefono2Apoderado);
-            ps.setString(14, modalidadPago);
-            ps.setString(15, metodoPago);
-            ps.setString(16, referenciaPago);
-            ps.setDouble(17, montoTotal);
-            ps.setDouble(18, primeraCuota);
-            ps.setDouble(19, saldoPendiente);
-            ps.setString(20, estadoPago);
-            ps.setDate(21, fechaLimite);
-            ps.setString(22, estadoInicial); // Estado dinámico basado en método de pago
+            ps.setString(3, email);
+            ps.setString(4, direccion);
+            ps.setString(5, colegio);
+            ps.setString(6, grado);
+            ps.setString(7, nombreApoderado);
+            ps.setString(8, apellidoApoderado);
+            ps.setString(9, dniApoderado);
+            ps.setString(10, emailApoderado);
+            ps.setString(11, telefono1Apoderado);
+            ps.setString(12, telefono2Apoderado);
+            ps.setString(13, modalidadPago);
+            ps.setString(14, metodoPago);
+            ps.setString(15, referenciaPago);
+            ps.setDouble(16, montoTotal);
+            ps.setDouble(17, primeraCuota);
+            ps.setDouble(18, saldoPendiente);
+            ps.setString(19, estadoPago);
+            ps.setDate(20, fechaLimite);
+            ps.setString(21, estadoInicial); // Estado dinámico basado en método de pago
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
@@ -415,8 +415,9 @@ public class PreinscripcionDAO {
     public List<Preinscripcion> listarTodas() {
         List<Preinscripcion> lista = new ArrayList<>();
         String sql = "SELECT id, fecha_registro, nombre, apellido, dni, email, direccion, colegio, carrera, grado, " +
-                "nombre_apoderado, apellido_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, " +
-                "modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, " +
+                "nombre_apoderado, apellido_apoderado, dni_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, "
+                +
+                "modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, boleta_sunat, " +
                 "monto_total, monto_pagado, saldo_pendiente, estado_pago, " +
                 "estado, origen, intentos FROM preinscripcion ORDER BY id DESC";
 
@@ -428,36 +429,7 @@ public class PreinscripcionDAO {
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Preinscripcion p = new Preinscripcion();
-                p.setId(rs.getInt("id"));
-                p.setFechaRegistro(rs.getTimestamp("fecha_registro"));
-                p.setNombres(rs.getString("nombre"));
-                p.setApellidos(rs.getString("apellido"));
-                p.setDni(rs.getString("dni"));
-                p.setCorreo(rs.getString("email"));
-                p.setDireccion(rs.getString("direccion"));
-                p.setColegio(rs.getString("colegio"));
-                p.setCarrera(rs.getString("carrera"));
-                p.setGrado(rs.getString("grado"));
-                p.setEstado(rs.getString("estado"));
-                p.setOrigen(rs.getString("origen"));
-                p.setIntentos(rs.getInt("intentos"));
-
-                // Datos del apoderado
-                p.setNombreApoderado(rs.getString("nombre_apoderado"));
-                p.setApellidoApoderado(rs.getString("apellido_apoderado"));
-                p.setTelefonoApoderado(rs.getString("telefono_apoderado"));
-
-                // Datos de pago
-                p.setModalidadPago(rs.getString("modalidad_pago"));
-                p.setMetodoPago(rs.getString("metodo_pago"));
-                p.setReferenciaPago(rs.getString("referencia_pago"));
-                p.setComprobantePago(rs.getString("comprobante_pago"));
-                p.setMontoTotal(rs.getDouble("monto_total"));
-                p.setMontoPagado(rs.getDouble("monto_pagado"));
-                p.setSaldoPendiente(rs.getDouble("saldo_pendiente"));
-                p.setEstadoPago(rs.getString("estado_pago"));
-
+                Preinscripcion p = mapearPreinscripcion(rs);
                 lista.add(p);
             }
 
@@ -466,6 +438,89 @@ public class PreinscripcionDAO {
         }
 
         return lista;
+    }
+
+    // Listar con paginación
+    public List<Preinscripcion> listarPaginado(int pagina, int registrosPorPagina) {
+        List<Preinscripcion> lista = new ArrayList<>();
+        int offset = (pagina - 1) * registrosPorPagina;
+
+        String sql = "SELECT id, fecha_registro, nombre, apellido, dni, email, direccion, colegio, carrera, grado, " +
+                "nombre_apoderado, apellido_apoderado, dni_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, "
+                +
+                "modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, boleta_sunat, " +
+                "monto_total, monto_pagado, saldo_pendiente, estado_pago, " +
+                "estado, origen, intentos FROM preinscripcion ORDER BY id DESC LIMIT ? OFFSET ?";
+
+        try (Connection conn = conecct.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, registrosPorPagina);
+            ps.setInt(2, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Preinscripcion p = mapearPreinscripcion(rs);
+                    lista.add(p);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    // Contar total de registros
+    public int contarTotal() {
+        String sql = "SELECT COUNT(*) FROM preinscripcion";
+        try (Connection conn = conecct.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Método auxiliar para mapear ResultSet a Preinscripcion
+    private Preinscripcion mapearPreinscripcion(ResultSet rs) throws SQLException {
+        Preinscripcion p = new Preinscripcion();
+        p.setId(rs.getInt("id"));
+        p.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+        p.setNombres(rs.getString("nombre"));
+        p.setApellidos(rs.getString("apellido"));
+        p.setDni(rs.getString("dni"));
+        p.setCorreo(rs.getString("email"));
+        p.setDireccion(rs.getString("direccion"));
+        p.setColegio(rs.getString("colegio"));
+        p.setGrado(rs.getString("grado"));
+        p.setEstado(rs.getString("estado"));
+        p.setOrigen(rs.getString("origen"));
+        p.setIntentos(rs.getInt("intentos"));
+
+        // Datos del apoderado
+        p.setNombreApoderado(rs.getString("nombre_apoderado"));
+        p.setApellidoApoderado(rs.getString("apellido_apoderado"));
+        p.setDniApoderado(rs.getString("dni_apoderado"));
+        p.setTelefonoApoderado(rs.getString("telefono_apoderado"));
+
+        // Datos de pago
+        p.setModalidadPago(rs.getString("modalidad_pago"));
+        p.setMetodoPago(rs.getString("metodo_pago"));
+        p.setReferenciaPago(rs.getString("referencia_pago"));
+        p.setComprobantePago(rs.getString("comprobante_pago"));
+        p.setBoletaSunat(rs.getString("boleta_sunat"));
+        p.setMontoTotal(rs.getDouble("monto_total"));
+        p.setMontoPagado(rs.getDouble("monto_pagado"));
+        p.setSaldoPendiente(rs.getDouble("saldo_pendiente"));
+        p.setEstadoPago(rs.getString("estado_pago"));
+
+        return p;
     }
 
     /**
@@ -587,8 +642,9 @@ public class PreinscripcionDAO {
         // Construir SQL con filtros
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT id, fecha_registro, nombre, apellido, dni, email, direccion, colegio, carrera, grado, ");
-        sql.append("nombre_apoderado, apellido_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, ");
-        sql.append("modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, ");
+        sql.append(
+                "nombre_apoderado, apellido_apoderado, dni_apoderado, email_apoderado, telefono_apoderado, telefono2_apoderado, ");
+        sql.append("modalidad_pago, metodo_pago, referencia_pago, comprobante_pago, boleta_sunat, ");
         sql.append("monto_total, monto_pagado, saldo_pendiente, estado_pago, fecha_limite_2da_cuota, ");
         sql.append("estado, origen, intentos FROM preinscripcion WHERE estado = 'aceptado'");
 
@@ -630,7 +686,6 @@ public class PreinscripcionDAO {
                 p.setCorreo(rs.getString("email"));
                 p.setDireccion(rs.getString("direccion"));
                 p.setColegio(rs.getString("colegio"));
-                p.setCarrera(rs.getString("carrera"));
                 p.setGrado(rs.getString("grado"));
                 p.setEstado(rs.getString("estado"));
                 p.setOrigen(rs.getString("origen"));
@@ -639,6 +694,7 @@ public class PreinscripcionDAO {
                 // Datos del apoderado
                 p.setNombreApoderado(rs.getString("nombre_apoderado"));
                 p.setApellidoApoderado(rs.getString("apellido_apoderado"));
+                p.setDniApoderado(rs.getString("dni_apoderado"));
                 p.setEmailApoderado(rs.getString("email_apoderado"));
                 p.setTelefonoApoderado(rs.getString("telefono_apoderado"));
                 p.setTelefono2Apoderado(rs.getString("telefono2_apoderado"));
@@ -648,6 +704,7 @@ public class PreinscripcionDAO {
                 p.setMetodoPago(rs.getString("metodo_pago"));
                 p.setReferenciaPago(rs.getString("referencia_pago"));
                 p.setComprobantePago(rs.getString("comprobante_pago"));
+                p.setBoletaSunat(rs.getString("boleta_sunat"));
                 p.setMontoTotal(rs.getDouble("monto_total"));
                 p.setMontoPagado(rs.getDouble("monto_pagado"));
                 p.setSaldoPendiente(rs.getDouble("saldo_pendiente"));
@@ -701,6 +758,26 @@ public class PreinscripcionDAO {
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Actualiza la ruta de la boleta SUNAT para una preinscripción
+     */
+    public boolean actualizarBoletaSunat(int id, String boletaSunat) {
+        String sql = "UPDATE preinscripcion SET boleta_sunat = ? WHERE id = ?";
+
+        try (Connection conn = conecct.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, boletaSunat);
+            ps.setInt(2, id);
+
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

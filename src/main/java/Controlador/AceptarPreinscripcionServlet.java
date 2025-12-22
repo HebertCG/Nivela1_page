@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.List;
 
 @WebServlet("/AceptarPreinscripcion")
 public class AceptarPreinscripcionServlet extends HttpServlet {
@@ -16,20 +15,17 @@ public class AceptarPreinscripcionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String dni = request.getParameter("dni");
-        if (dni == null || dni.isBlank()) {
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.isBlank()) {
             response.sendRedirect(request.getContextPath() + "/ListarPreinscripciones?mensaje=error");
             return;
         }
         try {
+            int id = Integer.parseInt(idStr);
 
-            dao.actualizarEstado(dni, "aceptado");
+            dao.actualizarEstadoPorId(id, "aceptado");
 
-            List<Preinscripcion> aceptados = dao.listarPorEstado("aceptado");
-            Preinscripcion pre = aceptados.stream()
-                    .filter(p -> p.getDni().equals(dni))
-                    .findFirst()
-                    .orElse(null);
+            Preinscripcion pre = dao.obtenerPorId(id);
 
             if (pre != null) {
 

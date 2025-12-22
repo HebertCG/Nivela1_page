@@ -5,6 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="img/LOGOS.png" />
         <title>Preinscripcion - Academia Nivel A1</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -292,9 +293,9 @@
         <div class="form-container">
             <div class="logo-header">
                 <img src="${pageContext.request.contextPath}/img/LOGOSECU.png" alt="Academia Nivel A1" class="logo-img">
-                <h1 style="font-size: 2rem; font-weight: 700; color: #1A1A1A; margin: 0;">Preinscripcion Verano 2026
+                <h1 style="font-size: 2rem; font-weight: 700; color: #1A1A1A; margin: 0;">Inscripcion Verano 2026
                 </h1>
-                <p style="color: #6B7280; margin-top: 0.5rem;">Completa todos los datos para tu preinscripcion</p>
+                <p style="color: #6B7280; margin-top: 0.5rem;">Completa todos los datos para tu inscripcion</p>
             </div>
 
             <div class="success-message ${param.success == 'true' ? 'show' : ''}">
@@ -320,19 +321,10 @@
                             <input type="text" class="form-control" name="apellido" required maxlength="100">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">DNI <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="dni" required pattern="[0-9]{8}" maxlength="8"
-                                placeholder="12345678">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="email" required maxlength="100"
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" maxlength="100"
                                 placeholder="ejemplo@email.com">
-                            <div class="info-note">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Verifica que el correo sea correcto. Se enviaran credenciales para acceder al intranet
-                                institucional.
-                            </div>
+
                         </div>
                         <div class="col-12">
                             <label class="form-label">Direccion</label>
@@ -394,19 +386,6 @@
                                 <option value="4to Sec - 5to Sec">4to Sec - 5to Sec</option>
                             </select>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Carrera de Interes <span class="text-danger">*</span></label>
-                            <select class="form-select" name="carrera" id="carreraSelect" required
-                                onchange="toggleOtraCarrera()">
-                                <option value="">Selecciona una carrera</option>
-                                <option value="Medicina">Medicina</option>
-                                <option value="Ingenieria">Ingenieria</option>
-                                <option value="Derecho">Derecho</option>
-                                <option value="Otros">Otros</option>
-                            </select>
-                            <input type="text" class="form-control" name="otraCarrera" id="otraCarreraInput"
-                                maxlength="100" placeholder="Especifica la carrera">
-                        </div>
                     </div>
                 </div>
 
@@ -421,6 +400,11 @@
                         <div class="col-md-6">
                             <label class="form-label">Apellido del Apoderado <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="apellidoApoderado" required maxlength="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">DNI del Apoderado <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="dniApoderado" required pattern="[0-9]{8}"
+                                maxlength="8" placeholder="12345678">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Telefono de Referencia 1 <span
@@ -478,10 +462,12 @@
                     <div class="row g-3" style="margin-top: 1rem;">
                         <div class="col-md-6">
                             <label class="form-label">Metodo de Pago <span class="text-danger">*</span></label>
-                            <select class="form-select" name="metodoPago" required>
+                            <select class="form-select" name="metodoPago" id="metodoPago" required
+                                onchange="mostrarCuentas()">
                                 <option value="">Selecciona metodo</option>
                                 <option value="yape">Yape</option>
                                 <option value="plin">Plin</option>
+                                <option value="transferencia">Transferencia Bancaria</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -510,6 +496,46 @@
                                                 alt="Ejemplo Plin">
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos bancarios para transferencia -->
+                        <div class="col-12" id="datosBancarios" style="display: none;">
+                            <div style="background: linear-gradient(135deg, #004481 0%, #0066CC 100%); 
+                                        padding: 1.5rem; border-radius: 12px; color: white; margin-top: 0.5rem;">
+                                <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">
+                                    <i class="bi bi-bank me-2"></i>Datos para Transferencia - BBVA
+                                </div>
+                                <div
+                                    style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem;">
+                                    <div style="font-size: 0.85rem; opacity: 0.9;">Cuenta Corriente BBVA</div>
+                                    <div
+                                        style="font-size: 1.2rem; font-weight: 700; font-family: monospace; letter-spacing: 1px;">
+                                        001106670200425070
+                                        <button type="button" onclick="copiarTexto('001106670200425070')"
+                                            style="background: rgba(255,255,255,0.2); border: none; color: white; 
+                                                       padding: 0.25rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; cursor: pointer;">
+                                            <i class="bi bi-clipboard"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px;">
+                                    <div style="font-size: 0.85rem; opacity: 0.9;">CCI (Código Interbancario)</div>
+                                    <div
+                                        style="font-size: 1.2rem; font-weight: 700; font-family: monospace; letter-spacing: 1px;">
+                                        01166700020042507036
+                                        <button type="button" onclick="copiarTexto('01166700020042507036')"
+                                            style="background: rgba(255,255,255,0.2); border: none; color: white; 
+                                                       padding: 0.25rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; cursor: pointer;">
+                                            <i class="bi bi-clipboard"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.9;">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Luego de realizar la transferencia, ingresa el número de operación y sube el
+                                    comprobante.
                                 </div>
                             </div>
                         </div>
@@ -550,19 +576,6 @@
                 }
             });
 
-            function toggleOtraCarrera() {
-                const select = document.getElementById('carreraSelect');
-                const input = document.getElementById('otraCarreraInput');
-                if (select.value === 'Otros') {
-                    input.style.display = 'block';
-                    input.required = true;
-                } else {
-                    input.style.display = 'none';
-                    input.required = false;
-                    input.value = '';
-                }
-            }
-
             function toggleHelp() {
                 const content = document.getElementById('helpContent');
                 const icon = document.getElementById('helpIcon');
@@ -573,6 +586,32 @@
                     content.classList.add('show');
                     icon.className = 'bi bi-chevron-up';
                 }
+            }
+
+            function mostrarCuentas() {
+                const metodo = document.getElementById('metodoPago').value;
+                const datosBancarios = document.getElementById('datosBancarios');
+                if (metodo === 'transferencia') {
+                    datosBancarios.style.display = 'block';
+                } else {
+                    datosBancarios.style.display = 'none';
+                }
+            }
+
+            function copiarTexto(texto) {
+                navigator.clipboard.writeText(texto).then(function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Copiado!',
+                        text: 'Número de cuenta copiado al portapapeles',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                }).catch(function (err) {
+                    console.error('Error al copiar: ', err);
+                });
             }
         </script>
 

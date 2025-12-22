@@ -3,6 +3,7 @@
         <%@ page import="modelo.Preinscripcion" %>
             <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+                    <fmt:setTimeZone value="America/Lima" />
                     <% List<Preinscripcion> preinscripciones = (List<Preinscripcion>)
                             request.getAttribute("preinscripciones");
                             String filtroActual = (String) request.getAttribute("filtroActual");
@@ -368,12 +369,11 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Fecha Reg.</th>
-                                                        <th>DNI</th>
                                                         <th>Alumno</th>
                                                         <th>Grado</th>
                                                         <th>Carrera</th>
                                                         <th>Apoderado</th>
-                                                        <th>Email Apod.</th>
+                                                        <th>DNI Apod.</th>
                                                         <th>Tel. 1</th>
                                                         <th>Tel. 2</th>
                                                         <th>Modalidad</th>
@@ -383,6 +383,7 @@
                                                         <th>Saldo</th>
                                                         <th>Límite 2da</th>
                                                         <th>Estado</th>
+                                                        <th>Boleta</th>
                                                         <th>Acciones</th>
                                                     </tr>
                                                 </thead>
@@ -397,9 +398,6 @@
                                                                 <fmt:formatDate value="<%= p.getFechaRegistro() %>"
                                                                     pattern="dd/MM/yyyy HH:mm" />
                                                             </td>
-                                                            <td><strong>
-                                                                    <%= p.getDni() %>
-                                                                </strong></td>
                                                             <td>
                                                                 <%= p.getNombres() %>
                                                                     <%= p.getApellidos() %>
@@ -414,10 +412,10 @@
                                                                 <%= p.getNombreApoderado() %>
                                                                     <%= p.getApellidoApoderado() %>
                                                             </td>
-                                                            <td>
-                                                                <%= p.getEmailApoderado() !=null ? p.getEmailApoderado()
-                                                                    : "-" %>
-                                                            </td>
+                                                            <td><strong>
+                                                                    <%= p.getDniApoderado() !=null ? p.getDniApoderado()
+                                                                        : "-" %>
+                                                                </strong></td>
                                                             <td>
                                                                 <%= p.getTelefonoApoderado() !=null ?
                                                                     p.getTelefonoApoderado() : "-" %>
@@ -453,6 +451,22 @@
                                                             <td><span class="badge-status <%= estadoBadge %>">
                                                                     <%= estadoTexto %>
                                                                 </span></td>
+                                                            <td>
+                                                                <% if (p.getBoletaSunat() !=null &&
+                                                                    !p.getBoletaSunat().isEmpty()) { %>
+                                                                    <a href="${pageContext.request.contextPath}/<%= p.getBoletaSunat() %>"
+                                                                        target="_blank" class="btn btn-sm btn-info"
+                                                                        title="Ver Boleta">
+                                                                        <i class="bi bi-file-earmark-pdf"></i>
+                                                                    </a>
+                                                                    <% } else { %>
+                                                                        <button class="btn btn-sm btn-outline-secondary"
+                                                                            onclick="subirBoleta(<%= p.getId() %>, '<%= p.getNombres() %> <%= p.getApellidos() %>')"
+                                                                            title="Subir Boleta">
+                                                                            <i class="bi bi-upload"></i>
+                                                                        </button>
+                                                                        <% } %>
+                                                            </td>
                                                             <td>
                                                                 <% if (p.getSaldoPendiente()> 0) { %>
                                                                     <button class="btn btn-sm btn-success"
@@ -542,6 +556,34 @@
                                         }).then(function (result) {
                                             if (result.isConfirmed) {
                                                 window.location.href = '${pageContext.request.contextPath}/admin/ConfirmarPagoDeuda?id=' + id + '&monto=' + saldo;
+                                            }
+                                        });
+                                    }
+
+                                    function subirBoleta(id, alumno) {
+                                        Swal.fire({
+                                            title: '<i class="bi bi-file-earmark-pdf text-info"></i> Subir Boleta SUNAT',
+                                            html: '<form id="formBoleta" enctype="multipart/form-data" action="${pageContext.request.contextPath}/SubirBoletaServlet" method="POST">' +
+                                                '<input type="hidden" name="idPreinscripcion" value="' + id + '">' +
+                                                '<div style="text-align:left; margin-bottom: 15px;">' +
+                                                '<p style="margin-bottom: 10px;"><strong>Alumno:</strong> ' + alumno + '</p>' +
+                                                '<label class="form-label">Seleccione el archivo PDF de la boleta:</label>' +
+                                                '<input type="file" name="boletaFile" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>' +
+                                                '</div>' +
+                                                '</form>',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#0EA5E9',
+                                            cancelButtonColor: '#6B7280',
+                                            confirmButtonText: '<i class="bi bi-upload"></i> Subir Boleta',
+                                            cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                                            preConfirm: function () {
+                                                var fileInput = document.querySelector('#formBoleta input[name="boletaFile"]');
+                                                if (!fileInput.files.length) {
+                                                    Swal.showValidationMessage('Por favor seleccione un archivo');
+                                                    return false;
+                                                }
+                                                document.getElementById('formBoleta').submit();
+                                                return true;
                                             }
                                         });
                                     }

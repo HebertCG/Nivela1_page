@@ -32,27 +32,18 @@ public class RegistrarPreinscripcionPublicaServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Datos del alumno
+        // Datos del alumno (ya no incluye DNI)
         String nombre = request.getParameter("nombre");
         String apellido = request.getParameter("apellido");
-        String dni = request.getParameter("dni");
         String email = request.getParameter("email");
         String direccion = request.getParameter("direccion");
         String colegio = request.getParameter("colegio");
         String grado = request.getParameter("grado");
 
-        // Carrera - manejar "Otros"
-        String carrera = request.getParameter("carrera");
-        if ("Otros".equals(carrera)) {
-            String otraCarrera = request.getParameter("otraCarrera");
-            if (otraCarrera != null && !otraCarrera.trim().isEmpty()) {
-                carrera = otraCarrera.trim();
-            }
-        }
-
-        // Datos del apoderado
+        // Datos del apoderado (ahora incluye DNI)
         String nombreApoderado = request.getParameter("nombreApoderado");
         String apellidoApoderado = request.getParameter("apellidoApoderado");
+        String dniApoderado = request.getParameter("dniApoderado");
         String emailApoderado = request.getParameter("emailApoderado");
         String telefono1Apoderado = request.getParameter("telefono1Apoderado");
         String telefono2Apoderado = request.getParameter("telefono2Apoderado");
@@ -115,8 +106,8 @@ public class RegistrarPreinscripcionPublicaServlet extends HttpServlet {
 
             // Insertar preinscripción y obtener ID
             int idPreinscripcion = preinscripcionDAO.insertarPublica(
-                    nombre, apellido, dni, email, direccion, colegio, carrera, grado,
-                    nombreApoderado, apellidoApoderado, emailApoderado,
+                    nombre, apellido, email, direccion, colegio, grado,
+                    nombreApoderado, apellidoApoderado, dniApoderado, emailApoderado,
                     telefono1Apoderado, telefono2Apoderado,
                     modalidadPago, metodoPago, referenciaPago, comprobantePath);
 

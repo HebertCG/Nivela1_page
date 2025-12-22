@@ -11,9 +11,10 @@ public class RechazarPreinscripcionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String dni = request.getParameter("dni");
-        if (dni != null && !dni.isBlank()) {
-            dao.actualizarEstado(dni, "rechazado");
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.isBlank()) {
+            int id = Integer.parseInt(idStr);
+            dao.actualizarEstadoPorId(id, "rechazado");
         }
 
         response.sendRedirect(request.getContextPath() + "/ListarPreinscripciones?mensaje=rechazado");

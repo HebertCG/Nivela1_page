@@ -25,27 +25,18 @@ public class RegistrarPreinscripcionManualServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Datos del Alumno
+        // Datos del Alumno (ya no incluye DNI)
         String nombre = request.getParameter("nombre");
         String apellido = request.getParameter("apellido");
-        String dni = request.getParameter("dni");
         String email = request.getParameter("email");
         String direccion = request.getParameter("direccion");
         String colegio = request.getParameter("colegio");
         String grado = request.getParameter("grado");
 
-        // Carrera - manejar "Otros"
-        String carrera = request.getParameter("carrera");
-        if ("Otros".equals(carrera)) {
-            String otraCarrera = request.getParameter("otraCarrera");
-            if (otraCarrera != null && !otraCarrera.trim().isEmpty()) {
-                carrera = otraCarrera.trim();
-            }
-        }
-
-        // Datos del Apoderado
+        // Datos del Apoderado (ahora incluye DNI)
         String nombreApoderado = request.getParameter("nombreApoderado");
         String apellidoApoderado = request.getParameter("apellidoApoderado");
+        String dniApoderado = request.getParameter("dniApoderado");
         String emailApoderado = request.getParameter("emailApoderado");
         String telefono1Apoderado = request.getParameter("telefono1Apoderado");
         String telefono2Apoderado = request.getParameter("telefono2Apoderado");
@@ -55,20 +46,13 @@ public class RegistrarPreinscripcionManualServlet extends HttpServlet {
         String metodoPago = request.getParameter("metodoPago");
         String referenciaPago = request.getParameter("referenciaPago");
 
-        // LÓGICA DE ESTADO AUTOMÁTICO
-        // Efectivo → aceptado (va directo al Panel de Deudas)
-        // Yape/Transferencia → pendiente (va al Panel de Confirmación para admin)
-        String estadoInicial;
-        if ("efectivo".equalsIgnoreCase(metodoPago)) {
-            estadoInicial = "aceptado";
-        } else {
-            estadoInicial = "pendiente";
-        }
+        // Todos los registros manuales empiezan en 'pendiente' para que el admin revise
+        String estadoInicial = "pendiente";
 
         try {
             boolean registrado = preinscripcionDAO.insertarManual(
-                    nombre, apellido, dni, email, direccion, colegio, carrera, grado,
-                    nombreApoderado, apellidoApoderado, emailApoderado,
+                    nombre, apellido, email, direccion, colegio, grado,
+                    nombreApoderado, apellidoApoderado, dniApoderado, emailApoderado,
                     telefono1Apoderado, telefono2Apoderado,
                     modalidadPago, metodoPago, referenciaPago, estadoInicial);
 

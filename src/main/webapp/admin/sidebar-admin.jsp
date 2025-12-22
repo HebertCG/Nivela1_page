@@ -246,7 +246,7 @@
                     href="${pageContext.request.contextPath}/ListarPreinscripciones">
                     <span class="nav-indicator"></span>
                     <i class="bi bi-clipboard-check"></i>
-                    <span class="nav-text">Preinscripciones</span>
+                    <span class="nav-text">Inscripciones</span>
                 </a>
                 <a class="nav-link <%= " secciones".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
                     href="${pageContext.request.contextPath}/admin/ListarSecciones">

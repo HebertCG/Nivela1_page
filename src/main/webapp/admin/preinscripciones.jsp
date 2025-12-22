@@ -2,6 +2,7 @@
     <%@ page session="true" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
             <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+                <fmt:setTimeZone value="America/Lima" />
                 <%@ include file="verificarAdmin.jsp" %>
                     <% request.setAttribute("sidebarActive", "preinscripciones" ); %>
                         <!DOCTYPE html>
@@ -10,7 +11,8 @@
                         <head>
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Gestion de Preinscripciones</title>
+                            <title>Gestion de Inscripciones</title>
+                            <link rel="icon" type="image/png" href="img/LOGOS.png" />
                             <link rel="stylesheet"
                                 href="${pageContext.request.contextPath}/assets/bootstrap/css/bootstrap.min.css">
                             <link rel="stylesheet"
@@ -377,7 +379,7 @@
                                     <div class="content-wrapper">
                                         <%@ include file="topbar-admin.jsp" %>
                                             <main class="dashboard-main">
-                                                <h1 class="page-title">Gestion de Preinscripciones</h1>
+                                                <h1 class="page-title">Gestion de Inscripciones</h1>
                                                 <p class="page-subtitle">Registra manualmente o gestiona las solicitudes
                                                     online</p>
 
@@ -399,31 +401,22 @@
                                                                     Alumno
                                                                 </h5>
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-6">
                                                                 <label class="form-label">Nombre <span
                                                                         class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" name="nombre"
                                                                     required maxlength="100">
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-6">
                                                                 <label class="form-label">Apellido <span
                                                                         class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" name="apellido"
                                                                     required maxlength="100">
                                                             </div>
-                                                            <div class="col-md-4">
-                                                                <label class="form-label">DNI <span
-                                                                        class="text-danger">*</span></label>
-                                                                <input type="text" class="form-control" name="dni"
-                                                                    required pattern="[0-9]{8}" maxlength="8"
-                                                                    placeholder="12345678">
-                                                            </div>
                                                             <div class="col-md-6">
-                                                                <label class="form-label">Email <span
-                                                                        class="text-danger">*</span></label>
+                                                                <label class="form-label">Email</label>
                                                                 <input type="email" class="form-control" name="email"
-                                                                    required maxlength="100"
-                                                                    placeholder="ejemplo@email.com">
+                                                                    maxlength="100" placeholder="ejemplo@email.com">
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label class="form-label">Direccion</label>
@@ -513,13 +506,19 @@
                                                                     name="apellidoApoderado" required maxlength="100">
                                                             </div>
                                                             <div class="col-md-4">
-                                                                <label class="form-label">Email del Apoderado <span
+                                                                <label class="form-label">DNI del Apoderado <span
                                                                         class="text-danger">*</span></label>
+                                                                <input type="text" class="form-control"
+                                                                    name="dniApoderado" required pattern="[0-9]{8}"
+                                                                    maxlength="8" placeholder="12345678">
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Email del Apoderado</label>
                                                                 <input type="email" class="form-control"
-                                                                    name="emailApoderado" required maxlength="100"
+                                                                    name="emailApoderado" maxlength="100"
                                                                     placeholder="apoderado@email.com">
                                                             </div>
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-4">
                                                                 <label class="form-label">Telefono de Referencia 1 <span
                                                                         class="text-danger">*</span></label>
                                                                 <input type="tel" class="form-control"
@@ -527,7 +526,7 @@
                                                                     pattern="[0-9]{9}" maxlength="9"
                                                                     placeholder="987654321">
                                                             </div>
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-4">
                                                                 <label class="form-label">Telefono de Referencia 2 <span
                                                                         class="text-danger">*</span></label>
                                                                 <input type="tel" class="form-control"
@@ -586,7 +585,7 @@
                                                 <div class="content-card">
                                                     <div class="card-header-custom">
                                                         <div class="card-icon"><i class="bi bi-list-check"></i></div>
-                                                        <h2 class="card-title-custom">Preinscripciones</h2>
+                                                        <h2 class="card-title-custom">Inscripciones</h2>
                                                     </div>
                                                     <div class="filter-tabs">
                                                         <button class="filter-tab active"
@@ -603,9 +602,9 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>Fecha Registro</th>
-                                                                    <th>DNI</th>
                                                                     <th>Nombre</th>
                                                                     <th>Tel. Apoderado</th>
+                                                                    <th>DNI Apoderado</th>
                                                                     <th>Núm. Operación</th>
                                                                     <th>Monto Pagado</th>
                                                                     <th>Modalidad</th>
@@ -625,12 +624,14 @@
                                                                                         value="${p.fechaRegistro}"
                                                                                         pattern="dd/MM/yyyy HH:mm" />
                                                                                 </td>
-                                                                                <td><strong>${p.dni}</strong></td>
                                                                                 <td>${p.nombre} ${p.apellido}</td>
                                                                                 <td><strong
                                                                                         style="color: #059669;">${p.telefonoApoderado
                                                                                         != null ? p.telefonoApoderado :
                                                                                         '-'}</strong></td>
+                                                                                <td><strong>${p.dniApoderado != null ?
+                                                                                        p.dniApoderado : '-'}</strong>
+                                                                                </td>
                                                                                 <td><span
                                                                                         style="font-family: monospace; font-size: 0.9rem;">${p.referenciaPago
                                                                                         != null ? p.referenciaPago :
@@ -675,9 +676,9 @@
                                                                                 <td>
                                                                                     <c:if
                                                                                         test="${p.estado == 'pendiente'}">
-                                                                                        <a href="${pageContext.request.contextPath}/AceptarPreinscripcion?dni=${p.dni}"
+                                                                                        <a href="${pageContext.request.contextPath}/AceptarPreinscripcion?id=${p.id}"
                                                                                             class="btn-action btn-accept">Aceptar</a>
-                                                                                        <a href="${pageContext.request.contextPath}/RechazarPreinscripcion?dni=${p.dni}"
+                                                                                        <a href="${pageContext.request.contextPath}/RechazarPreinscripcion?id=${p.id}"
                                                                                             class="btn-action btn-reject">Rechazar</a>
                                                                                         <button
                                                                                             class="btn-action btn-edit"
@@ -700,6 +701,73 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
+
+                                                    <!-- Paginación -->
+                                                    <c:if test="${totalPaginas > 1}">
+                                                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3"
+                                                            style="border-top: 1px solid #E5E7EB;">
+                                                            <div class="text-muted">
+                                                                Mostrando página <strong>${paginaActual}</strong> de
+                                                                <strong>${totalPaginas}</strong>
+                                                                (${totalRegistros} registros en total)
+                                                            </div>
+                                                            <nav aria-label="Paginación">
+                                                                <ul class="pagination mb-0">
+                                                                    <li
+                                                                        class="page-item ${paginaActual == 1 ? 'disabled' : ''}">
+                                                                        <a class="page-link"
+                                                                            href="${pageContext.request.contextPath}/ListarPreinscripciones?pagina=${paginaActual - 1}"
+                                                                            aria-label="Anterior">
+                                                                            <span aria-hidden="true">&laquo;</span>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <c:forEach begin="1" end="${totalPaginas}" var="i">
+                                                                        <c:choose>
+                                                                            <c:when test="${totalPaginas <= 7}">
+                                                                                <li
+                                                                                    class="page-item ${paginaActual == i ? 'active' : ''}">
+                                                                                    <a class="page-link"
+                                                                                        href="${pageContext.request.contextPath}/ListarPreinscripciones?pagina=${i}">${i}</a>
+                                                                                </li>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <c:if
+                                                                                    test="${i == 1 || i == totalPaginas || (i >= paginaActual - 2 && i <= paginaActual + 2)}">
+                                                                                    <li
+                                                                                        class="page-item ${paginaActual == i ? 'active' : ''}">
+                                                                                        <a class="page-link"
+                                                                                            href="${pageContext.request.contextPath}/ListarPreinscripciones?pagina=${i}">${i}</a>
+                                                                                    </li>
+                                                                                </c:if>
+                                                                                <c:if
+                                                                                    test="${i == 2 && paginaActual > 4}">
+                                                                                    <li class="page-item disabled"><span
+                                                                                            class="page-link">...</span>
+                                                                                    </li>
+                                                                                </c:if>
+                                                                                <c:if
+                                                                                    test="${i == totalPaginas - 1 && paginaActual < totalPaginas - 3}">
+                                                                                    <li class="page-item disabled"><span
+                                                                                            class="page-link">...</span>
+                                                                                    </li>
+                                                                                </c:if>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </c:forEach>
+
+                                                                    <li
+                                                                        class="page-item ${paginaActual == totalPaginas ? 'disabled' : ''}">
+                                                                        <a class="page-link"
+                                                                            href="${pageContext.request.contextPath}/ListarPreinscripciones?pagina=${paginaActual + 1}"
+                                                                            aria-label="Siguiente">
+                                                                            <span aria-hidden="true">&raquo;</span>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </c:if>
                                                 </div>
                                             </main>
                                     </div>

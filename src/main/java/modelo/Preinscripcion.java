@@ -14,9 +14,11 @@ public class Preinscripcion {
     private String emailApoderado;
     private String telefonoApoderado;
     private String telefono2Apoderado;
+    private String dniApoderado;
     private String metodoPago;
     private String referenciaPago;
     private String comprobantePago;
+    private String boletaSunat;
 
     // Campos para sistema de cuotas
     private String modalidadPago; // "contado" o "cuotas"
@@ -205,6 +207,14 @@ public class Preinscripcion {
         this.telefono2Apoderado = telefono2Apoderado;
     }
 
+    public String getDniApoderado() {
+        return dniApoderado;
+    }
+
+    public void setDniApoderado(String dniApoderado) {
+        this.dniApoderado = dniApoderado;
+    }
+
     public String getMetodoPago() {
         return metodoPago;
     }
@@ -227,6 +237,14 @@ public class Preinscripcion {
 
     public void setComprobantePago(String comprobantePago) {
         this.comprobantePago = comprobantePago;
+    }
+
+    public String getBoletaSunat() {
+        return boletaSunat;
+    }
+
+    public void setBoletaSunat(String boletaSunat) {
+        this.boletaSunat = boletaSunat;
     }
 
     public String getGrado() {
