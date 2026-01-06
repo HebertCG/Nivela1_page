@@ -242,6 +242,17 @@
                                             </div>
 
                                             <div class="admin-card card-blue">
+                                                <div class="card-icon"><i class="bi bi-person-plus-fill"></i></div>
+                                                <h3 class="card-title">Registrar Estudiantes</h3>
+                                                <p class="card-description">Agrega estudiantes a las secciones del
+                                                    sistema.</p>
+                                                <a href="${pageContext.request.contextPath}/admin/registrar-estudiante.jsp"
+                                                    class="card-button">
+                                                    <span>Registrar</span><i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="admin-card card-blue">
                                                 <div class="card-icon"><i class="bi bi-mortarboard"></i></div>
                                                 <h3 class="card-title">Estudiantes Aceptados</h3>
                                                 <p class="card-description">Visualice y asigne grupos.</p>
@@ -291,6 +302,17 @@
                                                 <a href="${pageContext.request.contextPath}/admin/horarios.jsp"
                                                     class="card-button">
                                                     <span>Configurar</span><i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="admin-card card-indigo">
+                                                <div class="card-icon"><i class="bi bi-clipboard-check"></i></div>
+                                                <h3 class="card-title">Asistencia</h3>
+                                                <p class="card-description">Toma asistencia diaria de los estudiantes.
+                                                </p>
+                                                <a href="${pageContext.request.contextPath}/admin/asistencia.jsp"
+                                                    class="card-button">
+                                                    <span>Tomar Asistencia</span><i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </div>
 
