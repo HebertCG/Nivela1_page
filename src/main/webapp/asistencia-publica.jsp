@@ -147,6 +147,16 @@
                     color: var(--text-dark);
                 }
 
+                .selected-row {
+                    background-color: #d1ecf1 !important;
+                    /* Celeste claro */
+                    transition: background-color 0.2s ease;
+                }
+
+                .table-weekly tbody tr.selected-row:hover {
+                    background-color: #bee5eb !important;
+                }
+
                 .estado-cell {
                     padding: 0.5rem;
                     border-radius: 8px;
@@ -258,9 +268,24 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <button class="btn btn-primary" onclick="loadAttendance()">
-                                <i class="fas fa-search"></i> Consultar Asistencia
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-12">
+                                <label class="filter-label">Buscar Estudiante:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fas fa-search text-muted"></i></span>
+                                    <input type="text" id="searchInput"
+                                        class="form-control form-select-modern border-start-0 ps-0"
+                                        placeholder="Escriba el nombre del estudiante para filtrar..."
+                                        onkeyup="filterStudents()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-end">
+                            <button class="btn btn-primary px-4 py-2" onclick="loadAttendance()">
+                                <i class="fas fa-search me-2"></i> Consultar Asistencia
                             </button>
                         </div>
                     </div>
@@ -316,6 +341,8 @@
 
                             if (data.success && data.estudiantes.length > 0) {
                                 renderTable(data);
+                                // Clear search input when reloading data
+                                document.getElementById('searchInput').value = '';
                             } else {
                                 const msg = data.message ? data.message : 'No se encontraron registros de asistencia para esta semana';
                                 document.getElementById('emptyState').innerHTML = `
@@ -354,7 +381,7 @@
 
                     html += '<tbody>';
                     estudiantes.forEach(est => {
-                        html += '<tr>';
+                        html += '<tr onclick="selectRow(this)">';
                         html += '<td>' + est.nombre + '</td>';
 
                         diasClase.forEach(dia => {
@@ -411,6 +438,39 @@
                     const fechaObj = new Date(year, month, day);
                     const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
                     return dias[fechaObj.getDay()];
+                }
+
+                // New Functions for Search and Highlight
+                function selectRow(row) {
+                    // Remove 'selected-row' from all other rows
+                    const rows = document.querySelectorAll('.table-weekly tbody tr');
+                    rows.forEach(r => r.classList.remove('selected-row'));
+
+                    // Add 'selected-row' to the clicked row
+                    row.classList.add('selected-row');
+                }
+
+                function filterStudents() {
+                    const input = document.getElementById('searchInput');
+                    const filter = input.value.toUpperCase();
+                    const table = document.querySelector('.table-weekly');
+                    if (!table) return; // No table loaded yet
+
+                    const tr = table.getElementsByTagName('tr');
+
+                    // Loop through all table rows, and hide those who don't match the search query
+                    // Start at 1 to skip the header row
+                    for (let i = 1; i < tr.length; i++) {
+                        const td = tr[i].getElementsByTagName('td')[0]; // Student name is in the first column
+                        if (td) {
+                            const txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
                 }
             </script>
         </body>

@@ -75,7 +75,25 @@ public class AsistenciaPublicaServlet extends HttpServlet {
             System.out.println("   Found Students: " + estudiantes.size());
 
             // Obtener días de clase de la sección
-            List<String> diasClase = horarioDAO.obtenerDiasPorSeccion(seccionId);
+            // ⚠️ FIX: Usar la misma lógica que el Admin (GetAsistenciaSemanalServlet) para
+            // consistencia
+            // en lugar de confiar en asistencia_horarios que puede tener datos erróneos
+            // ("Martes" vs "Miércoles")
+            AsistenciaSeccionDAO seccionDAO = new AsistenciaSeccionDAO();
+            AsistenciaSeccion seccionObj = seccionDAO.obtenerPorId(seccionId);
+            String nombreSeccion = (seccionObj != null) ? seccionObj.getNombre() : "";
+            nombreSeccion = nombreSeccion.toLowerCase();
+
+            List<String> diasClase = new ArrayList<>();
+            if (nombreSeccion.contains("4to") || nombreSeccion.contains("5to")) {
+                diasClase = Arrays.asList("Lunes", "Martes", "Miércoles", "Jueves", "Viernes");
+            } else if (nombreSeccion.contains("2do") || nombreSeccion.contains("3ro")) {
+                diasClase = Arrays.asList("Lunes", "Miércoles", "Viernes");
+            } else if (nombreSeccion.contains("6to") || nombreSeccion.contains("1ro")) {
+                diasClase = Arrays.asList("Martes", "Jueves", "Sábado");
+            } else {
+                diasClase = Arrays.asList("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
+            }
 
             // Obtener todas las asistencias de la semana
             List<AsistenciaRegistro> registros = registroDAO.obtenerPorSeccionYSemana(seccionId, semanaId);

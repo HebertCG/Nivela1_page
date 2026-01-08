@@ -15,12 +15,15 @@
                                 <meta charset="UTF-8">
                                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                                 <title>Registrar Estudiantes - Academia NivelA1</title>
+                                <link rel="icon" type="image/png"
+                                    href="${pageContext.request.contextPath}/img/LOGOS.png" />
                                 <link rel="stylesheet"
                                     href="${pageContext.request.contextPath}/assets/bootstrap/css/bootstrap.min.css">
                                 <link rel="stylesheet"
                                     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
                                 <script src="https://kit.fontawesome.com/f054896dbd.js"
                                     crossorigin="anonymous"></script>
+                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                                 <style>
                                     body {
@@ -185,6 +188,57 @@
                                     </div>
                                 </div>
 
+                                <!-- Modal de Edición -->
+                                <div class="modal fade" id="editarEstudianteModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Editar
+                                                    Estudiante</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="editarEstudianteForm">
+                                                    <input type="hidden" id="editEstudianteId">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nombre Completo</label>
+                                                        <input type="text" class="form-control" id="editNombre"
+                                                            required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Sección</label>
+                                                        <select class="form-select" id="editSeccionId" required>
+                                                            <% if (secciones !=null) { for (AsistenciaSeccion s :
+                                                                secciones) { %>
+                                                                <option value="<%= s.getId() %>">
+                                                                    <%= s.getNombre() %>
+                                                                </option>
+                                                                <% } } %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Código (Opcional)</label>
+                                                        <input type="text" class="form-control" id="editCodigo">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="guardarEdicion()">Guardar Cambios</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </main>
+                                </div>
+                                </div>
+
                                 <script
                                     src="${pageContext.request.contextPath}/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
                                 <script>
@@ -289,13 +343,29 @@
                                                 if (data.success && data.estudiantes && data.estudiantes.length > 0) {
                                                     let html = '';
                                                     data.estudiantes.forEach(est => {
+                                                        // Escapar comillas para evitar errores en onclick
+                                                        const safeNombre = est.nombreCompleto.replace(/"/g, "&quot;");
+                                                        const safeCodigo = (est.codigo || '').replace(/"/g, "&quot;");
+
                                                         html += `
                                 <div class="student-item">
-                                    <div>
-                                        <div class="fw-bold">\${est.nombreCompleto}</div>
-                                        \${est.codigo ? '<small class="text-muted">Código: ' + est.codigo + '</small>' : ''}
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <div class="fw-bold">\${est.nombreCompleto}</div>
+                                            \${est.codigo ? '<small class="text-muted">Código: ' + est.codigo + '</small>' : ''}
+                                        </div>
                                     </div>
-                                    <span class="badge bg-primary badge-section">\${est.seccionNombre || 'Sección'}</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-primary badge-section me-2">\${est.seccionNombre || 'Sección'}</span>
+                                        <button class="btn btn-sm btn-outline-warning" 
+                                            onclick="abrirModalEdicion(\${est.id}, '\${safeNombre}', '\${safeCodigo}', \${est.seccionId})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                            onclick="eliminarEstudiante(\${est.id})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </div>`;
                                                     });
                                                     listContainer.innerHTML = html;
@@ -311,6 +381,75 @@
                                                 console.error(err);
                                                 listContainer.innerHTML = '<div class="alert alert-danger">Error al cargar la lista de estudiantes</div>';
                                             });
+                                    }
+
+                                    // --- Funciones para Editar y Eliminar ---
+
+                                    let modalEdicion;
+
+                                    document.addEventListener('DOMContentLoaded', () => {
+                                        modalEdicion = new bootstrap.Modal(document.getElementById('editarEstudianteModal'));
+                                    });
+
+                                    function abrirModalEdicion(id, nombre, codigo, seccionId) {
+                                        document.getElementById('editEstudianteId').value = id;
+                                        document.getElementById('editNombre').value = nombre;
+                                        document.getElementById('editCodigo').value = codigo;
+                                        document.getElementById('editSeccionId').value = seccionId;
+                                        modalEdicion.show();
+                                    }
+
+                                    function guardarEdicion() {
+                                        const id = document.getElementById('editEstudianteId').value;
+                                        const nombre = document.getElementById('editNombre').value;
+                                        const codigo = document.getElementById('editCodigo').value;
+                                        const seccionId = document.getElementById('editSeccionId').value;
+
+                                        if (!nombre) { alert("El nombre es obligatorio"); return; }
+
+                                        const params = new URLSearchParams();
+                                        params.append('id', id);
+                                        params.append('nombre', nombre);
+                                        params.append('codigo', codigo);
+                                        params.append('seccionId', seccionId);
+
+                                        fetch('${pageContext.request.contextPath}/EditarEstudianteServlet', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                            body: params.toString()
+                                        })
+                                            .then(r => r.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    alert("✅ Actualizado correctamente");
+                                                    modalEdicion.hide();
+                                                    // Recargar lista
+                                                    loadStudents(document.getElementById('filterSeccion').value);
+                                                } else {
+                                                    alert("❌ Error: " + data.message);
+                                                }
+                                            })
+                                            .catch(err => alert("Error de conexión"));
+                                    }
+
+                                    function eliminarEstudiante(id) {
+                                        if (!confirm("¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer.")) return;
+
+                                        fetch('${pageContext.request.contextPath}/EliminarEstudianteServlet', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                            body: 'id=' + id
+                                        })
+                                            .then(r => r.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    alert("🗑️ Estudiante eliminado");
+                                                    loadStudents(document.getElementById('filterSeccion').value);
+                                                } else {
+                                                    alert("❌ Error: " + data.message);
+                                                }
+                                            })
+                                            .catch(err => alert("Error de conexión"));
                                     }
                                 </script>
                             </body>

@@ -126,16 +126,17 @@ public class AsistenciaEstudianteDAO {
 
     // Actualizar estudiante
     public boolean actualizar(AsistenciaEstudiante estudiante) {
-        String sql = "UPDATE asistencia_estudiantes SET seccion_id = ?, nombre_completo = ?, orden = ?, activo = ? WHERE id = ?";
+        String sql = "UPDATE asistencia_estudiantes SET seccion_id = ?, nombre_completo = ?, codigo = ?, orden = ?, activo = ? WHERE id = ?";
 
         try {
             conn = conecct.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setInt(1, estudiante.getSeccionId());
             ps.setString(2, estudiante.getNombreCompleto());
-            ps.setInt(3, estudiante.getOrden());
-            ps.setBoolean(4, estudiante.isActivo());
-            ps.setInt(5, estudiante.getId());
+            ps.setString(3, estudiante.getCodigo());
+            ps.setInt(4, estudiante.getOrden());
+            ps.setBoolean(5, estudiante.isActivo());
+            ps.setInt(6, estudiante.getId());
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
