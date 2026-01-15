@@ -1,53 +1,22 @@
 package Controlador;
 
 import DAO.AsistenciaRegistroDAO;
+import modelo.AsistenciaRegistro;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.util.Enumeration;
-// Imports removed
 
 @WebServlet(name = "GuardarAsistenciaSemanalServlet", urlPatterns = { "/GuardarAsistenciaSemanalServlet" })
 public class GuardarAsistenciaSemanalServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        response.setContentType("application/json;charset=UTF-8");
-
-        try {
-            // Leer el cuerpo de la petición (JSON)
-            StringBuilder sb = new StringBuilder();
-            BufferedReader reader = request.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            // Parsear JSON manual (simple) o usar org.json si estuviera disponible.
-            // Dado que no estoy seguro de las librerías, voy a intentar parsear el JSON
-            // de forma muy básica o mejor aun, confiar en que el usuario tiene org.json
-            // Vimos en archivos anteriores que NO hay imports de org.json o Gson visible.
-            // Construyen JSON a mano.
-
-            // CAMBIO DE ESTRATEGIA:
-            // Parsear JSON a mano es propenso a errores.
-            // Voy a asumir que el cliente envía datos como FORM VARIABLES tradicionales
-            // usando application/x-www-form-urlencoded
-            // El cliente enviará: datos=[{estudianteId:1, fecha:2026.., presente:true},
-            // ...]
-            // O mejor, una cadena JSON en un parametro 'data'.
-
-            throw new Exception("Use el método POST con parámetros x-www-form-urlencoded");
-
-        } catch (Exception e) {
-            // Fallback para manejar la lógica real en doPost si enviamos form-data
-        }
     }
 
     @Override
@@ -66,8 +35,7 @@ public class GuardarAsistenciaSemanalServlet extends HttpServlet {
                 return;
             }
 
-            System.out.println("📥 Servlet Guardar: Semana=" + semanaIdStr + " DataSize=" + dataJson.length());
-            // System.out.println("📦 Data: " + dataJson); // Descomentar para debug full
+            System.out.println("📥 Servlet Guardar (Masivo): Semana=" + semanaIdStr + " DataSize=" + dataJson.length());
 
             int semanaId = Integer.parseInt(semanaIdStr);
             AsistenciaRegistroDAO dao = new AsistenciaRegistroDAO();
@@ -79,10 +47,10 @@ public class GuardarAsistenciaSemanalServlet extends HttpServlet {
             if (cleanData.endsWith("]"))
                 cleanData = cleanData.substring(0, cleanData.length() - 1);
 
-            // Separar objetos
-            String[] objetos = cleanData.split("\\},\\{");
+            // Separar objetos usando regex robusto
+            String[] objetos = cleanData.split("(?<=\\}),\\s*(?=\\{)");
 
-            int guardados = 0;
+            List<AsistenciaRegistro> registrosParaGuardar = new ArrayList<>();
             String usuario = "ADMIN";
 
             for (String obj : objetos) {
@@ -125,24 +93,35 @@ public class GuardarAsistenciaSemanalServlet extends HttpServlet {
                             estado = presente ? "asistio" : "falto";
                         }
 
-                        boolean ok = dao.guardarAsistencia(estudianteId, semanaId, fecha, estado, usuario);
-                        if (ok)
-                            guardados++;
-                        else
-                            System.out.println("⚠️ DAO retornó FALSE para Estudiante: " + estudianteId);
+                        AsistenciaRegistro nuevoReg = new AsistenciaRegistro();
+                        nuevoReg.setEstudianteId(estudianteId);
+                        nuevoReg.setSemanaId(semanaId);
+                        nuevoReg.setFechaClase(fecha);
+                        nuevoReg.setEstado(estado);
+                        nuevoReg.setPresente(presente);
+                        nuevoReg.setUsuarioRegistro(usuario);
+
+                        registrosParaGuardar.add(nuevoReg);
                     }
                 } catch (Exception ex) {
-                    System.out.println("❌ Error procesando registro individual: " + ex.getMessage());
+                    System.out.println("❌ Error procesando registro individual (Parseo): " + ex.getMessage());
                 }
             }
 
-            System.out.println("✅ Guardado completado. Total procesados correctamente: " + guardados);
-            response.getWriter()
-                    .write("{\"success\": true, \"message\": \"Se guardaron " + guardados + " registros\"}");
+            // Llamar al DAO Masivo
+            boolean exito = dao.guardarMasivo(registrosParaGuardar);
+
+            if (exito) {
+                System.out.println("✅ Guardado Masivo completado. Total registros: " + registrosParaGuardar.size());
+                response.getWriter().write("{\"success\": true, \"message\": \"Se guardaron "
+                        + registrosParaGuardar.size() + " registros\"}");
+            } else {
+                response.getWriter().write("{\"success\": false, \"message\": \"Error al guardar en base de datos\"}");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().write("{\"success\": false, \"message\": \"Error: " + e.getMessage() + "\"}");
+            response.getWriter().write("{\"success\": false, \"message\": \"Error Servlet: " + e.getMessage() + "\"}");
         }
     }
 }

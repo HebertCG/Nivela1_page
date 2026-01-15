@@ -221,7 +221,88 @@ public class AsistenciaRegistroDAO {
         return lista;
     }
 
-    // Cerrar recursos
+    // Guardado Masivo Optimizado (Una sola conexión/transacción)
+    public boolean guardarMasivo(List<AsistenciaRegistro> registros) {
+        if (registros == null || registros.isEmpty())
+            return true;
+
+        String sqlCheck = "SELECT id FROM asistencia_registros WHERE estudiante_id = ? AND fecha_clase = ?";
+        String sqlInsert = "INSERT INTO asistencia_registros (estudiante_id, semana_id, fecha_clase, estado, presente, usuario_registro) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlUpdate = "UPDATE asistencia_registros SET estado = ?, presente = ?, usuario_registro = ?, fecha_registro = CURRENT_TIMESTAMP WHERE estudiante_id = ? AND fecha_clase = ?";
+
+        Connection connTransaccion = null;
+        PreparedStatement psCheck = null;
+        PreparedStatement psInsert = null;
+        PreparedStatement psUpdate = null;
+        ResultSet rsCheck = null;
+
+        try {
+            connTransaccion = conecct.getConnection();
+            connTransaccion.setAutoCommit(false); // Iniciar Transacción
+
+            psCheck = connTransaccion.prepareStatement(sqlCheck);
+            psInsert = connTransaccion.prepareStatement(sqlInsert);
+            psUpdate = connTransaccion.prepareStatement(sqlUpdate);
+
+            for (AsistenciaRegistro reg : registros) {
+                // Check
+                psCheck.setInt(1, reg.getEstudianteId());
+                psCheck.setDate(2, reg.getFechaClase());
+                rsCheck = psCheck.executeQuery();
+
+                boolean existe = rsCheck.next();
+                rsCheck.close(); // Importante cerrar RS parcial
+
+                if (existe) {
+                    // Update
+                    psUpdate.setString(1, reg.getEstado());
+                    psUpdate.setBoolean(2, reg.isPresente());
+                    psUpdate.setString(3, reg.getUsuarioRegistro());
+                    psUpdate.setInt(4, reg.getEstudianteId());
+                    psUpdate.setDate(5, reg.getFechaClase());
+                    psUpdate.executeUpdate();
+                } else {
+                    // Insert
+                    psInsert.setInt(1, reg.getEstudianteId());
+                    psInsert.setInt(2, reg.getSemanaId());
+                    psInsert.setDate(3, reg.getFechaClase());
+                    psInsert.setString(4, reg.getEstado());
+                    psInsert.setBoolean(5, reg.isPresente());
+                    psInsert.setString(6, reg.getUsuarioRegistro());
+                    psInsert.executeUpdate();
+                }
+            }
+
+            connTransaccion.commit(); // Confirmar cambios
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (connTransaccion != null)
+                    connTransaccion.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                if (rsCheck != null)
+                    rsCheck.close();
+                if (psCheck != null)
+                    psCheck.close();
+                if (psInsert != null)
+                    psInsert.close();
+                if (psUpdate != null)
+                    psUpdate.close();
+                if (connTransaccion != null)
+                    connTransaccion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void cerrarRecursos() {
         try {
             if (rs != null)
