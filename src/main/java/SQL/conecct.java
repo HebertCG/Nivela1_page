@@ -9,10 +9,8 @@ public class conecct {
 
     // 🔹 URL completa hacia tu instancia RDS (SSL desactivado para evitar error del
     // keystore)
-    private static final String URL = "jdbc:mysql://database-1.cjqokoekaqsn.us-east-2.rds.amazonaws.com:3306/academia_a1"
-            + "?sslMode=DISABLED"
-            + "&allowPublicKeyRetrieval=true"
-            + "&serverTimezone=UTC";
+    // 🔹 URL por defecto (Local Docker o Fallback)
+    private static final String URL = "jdbc:postgresql://db:5432/academia_a1";
 
     // 🔹 Credenciales del RDS
     private static final String USER = "admin";
@@ -21,8 +19,8 @@ public class conecct {
     // 🔹 Método central de conexión
     public static Connection getConnection() throws SQLException {
         try {
-            // Carga del driver JDBC de MySQL
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // Carga del driver JDBC de PostgreSQL
+            Class.forName("org.postgresql.Driver");
 
             // Obtener variables de entorno (Heroku) o usar valores por defecto (Local)
             String dbUrl = System.getenv("JDBC_DATABASE_URL");
@@ -46,15 +44,15 @@ public class conecct {
 
             // Intentar conexión
             Connection conn = DriverManager.getConnection(dbUrl, props);
-            System.out.println("✅ Conectado correctamente a AWS RDS");
+            System.out.println("✅ Conectado correctamente a PostgreSQL Docker");
             return conn;
 
         } catch (ClassNotFoundException e) {
-            throw new SQLException("❌ No se encontró el driver MySQL (agrega mysql-connector-j al classpath).", e);
+            throw new SQLException("❌ No se encontró el driver PostgreSQL (agrega postgresql al classpath).", e);
 
         } catch (SQLException e) {
             // Mostrar detalles completos para diagnóstico
-            System.err.println("❌ Error conectando a RDS: " + e.getMessage());
+            System.err.println("❌ Error conectando a Base de Datos: " + e.getMessage());
             System.err.println("   SQLState = " + e.getSQLState());
             System.err.println("   Code     = " + e.getErrorCode());
             throw e; // volver a lanzar para que el servlet lo capture si es necesario

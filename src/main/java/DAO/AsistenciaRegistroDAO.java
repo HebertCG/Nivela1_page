@@ -19,7 +19,7 @@ public class AsistenciaRegistroDAO {
                 "FROM asistencia_registros r " +
                 "INNER JOIN asistencia_estudiantes e ON r.estudiante_id = e.id " +
                 "INNER JOIN asistencia_semanas s ON r.semana_id = s.id " +
-                "WHERE e.seccion_id = ? AND r.semana_id = ? AND e.activo = TRUE " +
+                "WHERE e.seccion_id = ? AND r.semana_id = ? AND e.activo = 1 " +
                 "ORDER BY r.fecha_clase, e.orden, e.nombre_completo";
 
         try {
@@ -36,7 +36,7 @@ public class AsistenciaRegistroDAO {
                 registro.setSemanaId(rs.getInt("semana_id"));
                 registro.setFechaClase(rs.getDate("fecha_clase"));
                 registro.setEstado(rs.getString("estado"));
-                registro.setPresente(rs.getBoolean("presente"));
+                registro.setPresente(rs.getInt("presente") == 1);
                 registro.setObservaciones(rs.getString("observaciones"));
                 registro.setFechaRegistro(rs.getTimestamp("fecha_registro"));
                 registro.setUsuarioRegistro(rs.getString("usuario_registro"));
@@ -60,7 +60,7 @@ public class AsistenciaRegistroDAO {
         String sql = "SELECT r.*, e.nombre_completo, e.orden " +
                 "FROM asistencia_registros r " +
                 "INNER JOIN asistencia_estudiantes e ON r.estudiante_id = e.id " +
-                "WHERE e.seccion_id = ? AND r.fecha_clase = ? AND e.activo = TRUE " +
+                "WHERE e.seccion_id = ? AND r.fecha_clase = ? AND e.activo = 1 " +
                 "ORDER BY e.orden, e.nombre_completo";
 
         try {
@@ -77,7 +77,7 @@ public class AsistenciaRegistroDAO {
                 registro.setSemanaId(rs.getInt("semana_id"));
                 registro.setFechaClase(rs.getDate("fecha_clase"));
                 registro.setEstado(rs.getString("estado"));
-                registro.setPresente(rs.getBoolean("presente"));
+                registro.setPresente(rs.getInt("presente") == 1);
                 registro.setObservaciones(rs.getString("observaciones"));
                 registro.setFechaRegistro(rs.getTimestamp("fecha_registro"));
                 registro.setUsuarioRegistro(rs.getString("usuario_registro"));
@@ -120,7 +120,7 @@ public class AsistenciaRegistroDAO {
                 System.out.println("... Actualizando registro existente");
                 ps = conn.prepareStatement(sqlUpdate);
                 ps.setString(1, estado);
-                ps.setBoolean(2, presente);
+                ps.setInt(2, presente ? 1 : 0);
                 ps.setString(3, usuario);
                 ps.setInt(4, estudianteId);
                 ps.setDate(5, fechaClase);
@@ -133,7 +133,7 @@ public class AsistenciaRegistroDAO {
                 ps.setInt(2, semanaId);
                 ps.setDate(3, fechaClase);
                 ps.setString(4, estado);
-                ps.setBoolean(5, presente);
+                ps.setInt(5, presente ? 1 : 0);
                 ps.setString(6, usuario);
                 filasAfectadas = ps.executeUpdate();
             }
@@ -168,7 +168,7 @@ public class AsistenciaRegistroDAO {
                 registro.setSemanaId(rs.getInt("semana_id"));
                 registro.setFechaClase(rs.getDate("fecha_clase"));
                 registro.setEstado(rs.getString("estado"));
-                registro.setPresente(rs.getBoolean("presente"));
+                registro.setPresente(rs.getInt("presente") == 1);
                 registro.setObservaciones(rs.getString("observaciones"));
                 registro.setFechaRegistro(rs.getTimestamp("fecha_registro"));
                 registro.setUsuarioRegistro(rs.getString("usuario_registro"));
@@ -204,7 +204,7 @@ public class AsistenciaRegistroDAO {
                 registro.setSemanaId(rs.getInt("semana_id"));
                 registro.setFechaClase(rs.getDate("fecha_clase"));
                 registro.setEstado(rs.getString("estado"));
-                registro.setPresente(rs.getBoolean("presente"));
+                registro.setPresente(rs.getInt("presente") == 1);
                 registro.setObservaciones(rs.getString("observaciones"));
                 registro.setFechaRegistro(rs.getTimestamp("fecha_registro"));
                 registro.setUsuarioRegistro(rs.getString("usuario_registro"));
@@ -256,7 +256,7 @@ public class AsistenciaRegistroDAO {
                 if (existe) {
                     // Update
                     psUpdate.setString(1, reg.getEstado());
-                    psUpdate.setBoolean(2, reg.isPresente());
+                    psUpdate.setInt(2, reg.isPresente() ? 1 : 0);
                     psUpdate.setString(3, reg.getUsuarioRegistro());
                     psUpdate.setInt(4, reg.getEstudianteId());
                     psUpdate.setDate(5, reg.getFechaClase());
@@ -267,7 +267,7 @@ public class AsistenciaRegistroDAO {
                     psInsert.setInt(2, reg.getSemanaId());
                     psInsert.setDate(3, reg.getFechaClase());
                     psInsert.setString(4, reg.getEstado());
-                    psInsert.setBoolean(5, reg.isPresente());
+                    psInsert.setInt(5, reg.isPresente() ? 1 : 0);
                     psInsert.setString(6, reg.getUsuarioRegistro());
                     psInsert.executeUpdate();
                 }

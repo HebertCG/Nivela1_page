@@ -15,7 +15,7 @@ public class AsistenciaSeccionDAO {
     // Listar todas las secciones
     public List<AsistenciaSeccion> listarTodas() {
         List<AsistenciaSeccion> lista = new ArrayList<>();
-        String sql = "SELECT * FROM asistencia_secciones WHERE activo = TRUE ORDER BY orden";
+        String sql = "SELECT * FROM asistencia_secciones WHERE activo = 1 ORDER BY orden";
 
         try {
             conn = conecct.getConnection();
@@ -28,7 +28,7 @@ public class AsistenciaSeccionDAO {
                 seccion.setNombre(rs.getString("nombre"));
                 seccion.setDescripcion(rs.getString("descripcion"));
                 seccion.setOrden(rs.getInt("orden"));
-                seccion.setActivo(rs.getBoolean("activo"));
+                seccion.setActivo(rs.getInt("activo") == 1);
                 lista.add(seccion);
             }
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class AsistenciaSeccionDAO {
                 seccion.setNombre(rs.getString("nombre"));
                 seccion.setDescripcion(rs.getString("descripcion"));
                 seccion.setOrden(rs.getInt("orden"));
-                seccion.setActivo(rs.getBoolean("activo"));
+                seccion.setActivo(rs.getInt("activo") == 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class AsistenciaSeccionDAO {
             ps.setString(1, seccion.getNombre());
             ps.setString(2, seccion.getDescripcion());
             ps.setInt(3, seccion.getOrden());
-            ps.setBoolean(4, seccion.isActivo());
+            ps.setInt(4, seccion.isActivo() ? 1 : 0);
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
@@ -100,7 +100,7 @@ public class AsistenciaSeccionDAO {
             ps.setString(1, seccion.getNombre());
             ps.setString(2, seccion.getDescripcion());
             ps.setInt(3, seccion.getOrden());
-            ps.setBoolean(4, seccion.isActivo());
+            ps.setInt(4, seccion.isActivo() ? 1 : 0);
             ps.setInt(5, seccion.getId());
 
             int filasAfectadas = ps.executeUpdate();
@@ -115,7 +115,7 @@ public class AsistenciaSeccionDAO {
 
     // Eliminar sección (soft delete)
     public boolean eliminar(int id) {
-        String sql = "UPDATE asistencia_secciones SET activo = FALSE WHERE id = ?";
+        String sql = "UPDATE asistencia_secciones SET activo = 0 WHERE id = ?";
 
         try {
             conn = conecct.getConnection();

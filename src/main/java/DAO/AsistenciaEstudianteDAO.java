@@ -18,7 +18,7 @@ public class AsistenciaEstudianteDAO {
         String sql = "SELECT e.*, s.nombre as nombre_seccion " +
                 "FROM asistencia_estudiantes e " +
                 "INNER JOIN asistencia_secciones s ON e.seccion_id = s.id " +
-                "WHERE e.seccion_id = ? AND e.activo = TRUE " +
+                "WHERE e.seccion_id = ? AND e.activo = 1 " +
                 "ORDER BY e.orden, e.nombre_completo";
 
         try {
@@ -150,7 +150,7 @@ public class AsistenciaEstudianteDAO {
 
     // Eliminar estudiante (soft delete)
     public boolean eliminar(int id) {
-        String sql = "UPDATE asistencia_estudiantes SET activo = FALSE WHERE id = ?";
+        String sql = "UPDATE asistencia_estudiantes SET activo = 0 WHERE id = ?";
 
         try {
             conn = conecct.getConnection();
@@ -170,7 +170,7 @@ public class AsistenciaEstudianteDAO {
     // Contar estudiantes por sección
     public int contarPorSeccion(int seccionId) {
         int count = 0;
-        String sql = "SELECT COUNT(*) as total FROM asistencia_estudiantes WHERE seccion_id = ? AND activo = TRUE";
+        String sql = "SELECT COUNT(*) as total FROM asistencia_estudiantes WHERE seccion_id = ? AND activo = 1";
 
         try {
             conn = conecct.getConnection();

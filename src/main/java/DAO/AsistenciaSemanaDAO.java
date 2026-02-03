@@ -29,7 +29,7 @@ public class AsistenciaSemanaDAO {
                 semana.setNombre(rs.getString("nombre"));
                 semana.setFechaInicio(rs.getDate("fecha_inicio"));
                 semana.setFechaFin(rs.getDate("fecha_fin"));
-                semana.setActiva(rs.getBoolean("activa"));
+                semana.setActiva(rs.getInt("activa") == 1);
                 semana.setFechaCreacion(rs.getTimestamp("fecha_creacion"));
                 lista.add(semana);
             }
@@ -45,7 +45,7 @@ public class AsistenciaSemanaDAO {
     // Obtener semana activa
     public AsistenciaSemana obtenerActiva() {
         AsistenciaSemana semana = null;
-        String sql = "SELECT * FROM asistencia_semanas WHERE activa = TRUE LIMIT 1";
+        String sql = "SELECT * FROM asistencia_semanas WHERE activa = 1 LIMIT 1";
 
         try {
             conn = conecct.getConnection();
@@ -59,7 +59,7 @@ public class AsistenciaSemanaDAO {
                 semana.setNombre(rs.getString("nombre"));
                 semana.setFechaInicio(rs.getDate("fecha_inicio"));
                 semana.setFechaFin(rs.getDate("fecha_fin"));
-                semana.setActiva(rs.getBoolean("activa"));
+                semana.setActiva(rs.getInt("activa") == 1);
                 semana.setFechaCreacion(rs.getTimestamp("fecha_creacion"));
             }
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class AsistenciaSemanaDAO {
                 semana.setNombre(rs.getString("nombre"));
                 semana.setFechaInicio(rs.getDate("fecha_inicio"));
                 semana.setFechaFin(rs.getDate("fecha_fin"));
-                semana.setActiva(rs.getBoolean("activa"));
+                semana.setActiva(rs.getInt("activa") == 1);
                 semana.setFechaCreacion(rs.getTimestamp("fecha_creacion"));
             }
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class AsistenciaSemanaDAO {
             ps.setString(2, semana.getNombre());
             ps.setDate(3, semana.getFechaInicio());
             ps.setDate(4, semana.getFechaFin());
-            ps.setBoolean(5, semana.isActiva());
+            ps.setInt(5, semana.isActiva() ? 1 : 0);
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
@@ -135,7 +135,7 @@ public class AsistenciaSemanaDAO {
             ps.setString(2, semana.getNombre());
             ps.setDate(3, semana.getFechaInicio());
             ps.setDate(4, semana.getFechaFin());
-            ps.setBoolean(5, semana.isActiva());
+            ps.setInt(5, semana.isActiva() ? 1 : 0);
             ps.setInt(6, semana.getId());
 
             int filasAfectadas = ps.executeUpdate();
@@ -159,12 +159,12 @@ public class AsistenciaSemanaDAO {
             conn.setAutoCommit(false);
 
             // Desactivar todas las semanas
-            String sql1 = "UPDATE asistencia_semanas SET activa = FALSE";
+            String sql1 = "UPDATE asistencia_semanas SET activa = 0";
             ps1 = conn.prepareStatement(sql1);
             ps1.executeUpdate();
 
             // Activar la semana seleccionada
-            String sql2 = "UPDATE asistencia_semanas SET activa = TRUE WHERE id = ?";
+            String sql2 = "UPDATE asistencia_semanas SET activa = 1 WHERE id = ?";
             ps2 = conn.prepareStatement(sql2);
             ps2.setInt(1, id);
             ps2.executeUpdate();
