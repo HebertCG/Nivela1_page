@@ -10,9 +10,12 @@ FROM tomcat:10.1-jdk17
 RUN rm -rf /usr/local/tomcat/webapps/*
 COPY --from=build /app/target/PAGINA_WE-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Railway usa la variable PORT, configuramos Tomcat para usarla
-ENV CATALINA_OPTS="-Dport.http=$PORT"
+# Copiar script de inicio
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 8080
 
-# Script para usar el puerto de Railway si existe
-CMD ["sh", "-c", "catalina.sh run"]
+# Usar script personalizado que configura el puerto
+CMD ["/start.sh"]
+
