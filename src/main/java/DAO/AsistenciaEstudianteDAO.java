@@ -87,7 +87,7 @@ public class AsistenciaEstudianteDAO {
             ps.setInt(1, estudiante.getSeccionId());
             ps.setString(2, estudiante.getNombreCompleto());
             ps.setInt(3, estudiante.getOrden());
-            ps.setBoolean(4, estudiante.isActivo());
+            ps.setInt(4, estudiante.isActivo() ? 1 : 0);
 
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
@@ -110,7 +110,7 @@ public class AsistenciaEstudianteDAO {
             ps.setString(2, estudiante.getNombreCompleto());
             ps.setString(3, estudiante.getCodigo());
             ps.setInt(4, 0); // orden por defecto
-            ps.setBoolean(5, estudiante.isActivo());
+            ps.setInt(5, estudiante.isActivo() ? 1 : 0);
 
             int filasAfectadas = ps.executeUpdate();
             System.out.println("✅ Estudiante guardado. Filas afectadas: " + filasAfectadas);
@@ -135,7 +135,7 @@ public class AsistenciaEstudianteDAO {
             ps.setString(2, estudiante.getNombreCompleto());
             ps.setString(3, estudiante.getCodigo());
             ps.setInt(4, estudiante.getOrden());
-            ps.setBoolean(5, estudiante.isActivo());
+            ps.setInt(5, estudiante.isActivo() ? 1 : 0);
             ps.setInt(6, estudiante.getId());
 
             int filasAfectadas = ps.executeUpdate();
