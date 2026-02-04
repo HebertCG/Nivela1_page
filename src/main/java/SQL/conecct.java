@@ -42,6 +42,11 @@ public class conecct {
             props.setProperty("user", dbUser);
             props.setProperty("password", dbPass);
 
+            // ⚡ Configurar UTF-8 para evitar problemas con caracteres especiales (ñ, á, é,
+            // etc.)
+            props.setProperty("characterEncoding", "UTF-8");
+            props.setProperty("useUnicode", "true");
+
             // Intentar conexión
             Connection conn = DriverManager.getConnection(dbUrl, props);
             System.out.println("✅ Conectado correctamente a PostgreSQL Docker");
