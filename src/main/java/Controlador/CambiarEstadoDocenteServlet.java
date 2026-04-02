@@ -14,15 +14,19 @@ public class CambiarEstadoDocenteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        int estado = Integer.parseInt(request.getParameter("estado")); // 0 o 1
+        int estadoActual = Integer.parseInt(request.getParameter("estado")); // estado actual: 0 o 1
+
+        // Toggle: si estaba activo (1) → desactivar (0), si estaba inactivo (0) →
+        // activar (1)
+        int nuevoEstado = (estadoActual == 1) ? 0 : 1;
 
         UsuarioDAO dao = new UsuarioDAO();
-        boolean exito = dao.cambiarEstado(id, estado);
+        boolean exito = dao.cambiarEstado(id, nuevoEstado);
 
         if (exito) {
-            response.sendRedirect("ListarDocentesServlet?mensaje=estado_cambiado");
+            response.sendRedirect(request.getContextPath() + "/ListarDocentesServlet?mensaje=estado_cambiado");
         } else {
-            response.sendRedirect("ListarDocentesServlet?mensaje=error_estado");
+            response.sendRedirect(request.getContextPath() + "/ListarDocentesServlet?mensaje=error");
         }
     }
 }

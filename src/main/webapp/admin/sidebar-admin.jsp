@@ -258,13 +258,13 @@
             </a>
 
             <a class="nav-link <%= " administradores".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
-                href="${pageContext.request.contextPath}/admin/administradores.jsp">
+                href="${pageContext.request.contextPath}/ListarAdministradoresServlet">
                 <i class="bi bi-shield-check"></i>
                 <span class="nav-text">Administradores</span>
             </a>
 
             <a class="nav-link <%= " docentes".equalsIgnoreCase(sidebarActive) ? "active" : "" %>"
-                href="${pageContext.request.contextPath}/admin/docentes.jsp">
+                href="${pageContext.request.contextPath}/ListarDocentesServlet">
                 <i class="bi bi-person-workspace"></i>
                 <span class="nav-text">Docentes</span>
             </a>

@@ -7,35 +7,45 @@ import jakarta.servlet.annotation.*;
 import modelo.Usuario;
 
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet("/RegistrarAdministradorServlet")
+@WebServlet("/RegistrarAdministrador")
 public class RegistrarAdministradorServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String nombre = request.getParameter("nombre");
         String apellido = request.getParameter("apellido");
         String correo = request.getParameter("correo");
-        String password = request.getParameter("password");
+        String contrasena = request.getParameter("contrasena");
 
         UsuarioDAO dao = new UsuarioDAO();
 
         if (dao.existeCorreo(correo)) {
-           
-            response.sendRedirect("ListarAdministradoresServlet?mensaje=existe");
+            setMensaje(request, "El correo ya está registrado en el sistema.", "error");
         } else {
             try {
                 Usuario admin = new Usuario();
                 admin.setNombre(nombre);
                 admin.setApellido(apellido);
                 admin.setCorreo(correo);
-                admin.setPassword(password);
-                admin.setIdRol(1); 
-
+                admin.setPassword(contrasena);
+                admin.setIdRol(1); // Rol 1 = Administrador
                 dao.insertar(admin);
-                response.sendRedirect("ListarAdministradoresServlet?mensaje=exito");
+                setMensaje(request, "Administrador registrado exitosamente.", "success");
             } catch (Exception e) {
-                response.sendRedirect("ListarAdministradoresServlet?mensaje=error");
+                e.printStackTrace();
+                setMensaje(request, "Error al registrar el administrador: " + e.getMessage(), "error");
             }
         }
+
+        List<Usuario> administradores = dao.obtenerPorRol(1);
+        request.setAttribute("administradores", administradores);
+        request.getRequestDispatcher("admin/administradores.jsp").forward(request, response);
+    }
+
+    private void setMensaje(HttpServletRequest request, String texto, String tipo) {
+        request.setAttribute("mensaje", texto);
+        request.setAttribute("tipoMensaje", tipo);
     }
 }

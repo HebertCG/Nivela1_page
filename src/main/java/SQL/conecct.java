@@ -7,13 +7,11 @@ import java.util.Properties;
 
 public class conecct {
 
-    // 🔹 URL completa hacia tu instancia RDS (SSL desactivado para evitar error del
-    // keystore)
-    // 🔹 URL por defecto (Local Docker o Fallback)
-    private static final String URL = "jdbc:postgresql://db:5432/academia_a1";
+    // 🔹 URL para desarrollo local (NetBeans + PostgreSQL local)
+    private static final String URL = "jdbc:postgresql://localhost:5432/academia_a1?sslmode=disable";
 
-    // 🔹 Credenciales del RDS
-    private static final String USER = "admin";
+    // 🔹 Credenciales locales de PostgreSQL
+    private static final String USER = "postgres";
     private static final String PASS = "Hebertjose89";
 
     // 🔹 Método central de conexión

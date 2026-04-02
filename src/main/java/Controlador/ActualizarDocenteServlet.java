@@ -4,7 +4,6 @@ import DAO.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-
 import modelo.Usuario;
 import java.io.IOException;
 
@@ -13,18 +12,29 @@ public class ActualizarDocenteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String nombre = request.getParameter("nombre");
+            String apellido = request.getParameter("apellido");
+            String correo = request.getParameter("correo");
+            String password = request.getParameter("password");
 
-        Usuario docente = new Usuario();
-        docente.setId(id);
-        docente.setCorreo(request.getParameter("correo"));
-        docente.setPassword(request.getParameter("password"));
-        docente.setNombre(request.getParameter("nombre"));
-        docente.setApellido(request.getParameter("apellido"));
-        docente.setIdRol(2);
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario actual = dao.obtenerPorId(id);
 
-        UsuarioDAO dao = new UsuarioDAO();
-        dao.actualizar(docente);
-        response.sendRedirect("ListarDocentesServlet");
+            Usuario docente = new Usuario();
+            docente.setId(id);
+            docente.setNombre(nombre);
+            docente.setApellido(apellido);
+            docente.setCorreo(correo);
+            docente.setIdRol(2);
+            docente.setPassword((password != null && !password.trim().isEmpty()) ? password : actual.getPassword());
+
+            dao.actualizar(docente);
+            response.sendRedirect(request.getContextPath() + "/ListarDocentesServlet?mensaje=exito");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/ListarDocentesServlet?mensaje=error");
+        }
     }
 }

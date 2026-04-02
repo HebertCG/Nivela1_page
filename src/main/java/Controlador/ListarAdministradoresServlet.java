@@ -12,19 +12,40 @@ import java.util.List;
 @WebServlet("/ListarAdministradoresServlet")
 public class ListarAdministradoresServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         UsuarioDAO dao = new UsuarioDAO();
-        List<Usuario> listaAdministradores = dao.obtenerPorRol(1); // 1 = Administrador
+        List<Usuario> administradores = dao.obtenerPorRol(1); // 1 = Administrador
 
-        request.setAttribute("listaAdministradores", listaAdministradores);
+        request.setAttribute("administradores", administradores);
 
-        String mensaje = request.getParameter("mensaje");
-        if (mensaje != null) {
-            request.setAttribute("mensaje", mensaje);
+        String param = request.getParameter("mensaje");
+        if (param != null) {
+            switch (param) {
+                case "exito":
+                    request.setAttribute("mensaje", "Operación completada exitosamente.");
+                    request.setAttribute("tipoMensaje", "success");
+                    break;
+                case "existe":
+                    request.setAttribute("mensaje", "El correo ya está registrado en el sistema.");
+                    request.setAttribute("tipoMensaje", "error");
+                    break;
+                case "estado_cambiado":
+                    request.setAttribute("mensaje", "Estado del administrador actualizado.");
+                    request.setAttribute("tipoMensaje", "success");
+                    break;
+                case "eliminado":
+                    request.setAttribute("mensaje", "Administrador eliminado correctamente.");
+                    request.setAttribute("tipoMensaje", "success");
+                    break;
+                case "error":
+                default:
+                    request.setAttribute("mensaje", "Ocurrió un error. Intente nuevamente.");
+                    request.setAttribute("tipoMensaje", "error");
+                    break;
+            }
         }
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("admin/administradores.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("admin/administradores.jsp").forward(request, response);
     }
 }
-
