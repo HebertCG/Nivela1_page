@@ -1,0 +1,12 @@
+# Solo se despliega la landing estatica: HTML + assets + img.
+.git
+.github
+.vscode
+.idea
+node_modules
+tools
+*.log
+*.md
+!README.md
+Thumbs.db
+.DS_Store

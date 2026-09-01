@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Pagina no encontrada - Academia NivelA1</title>
+    <link rel="icon" type="image/png" href="img/LOGOS.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #000d83;
+            --secondary-color: #3ec4ff;
+            --light-bg: #F1F4FD;
+            --text-dark: #1a1a2e;
+            --text-light: #6c757d;
+            --card-bg: #ffffff;
+            --gradient-hero: linear-gradient(135deg, #000d83 0%, #3ec4ff 100%);
+        }
+
+        body.dark-mode {
+            --light-bg: #1a1a2e;
+            --text-dark: #ffffff;
+            --text-light: #b8b8b8;
+            --card-bg: #16213e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 2rem 1.25rem;
+            font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .card {
+            width: min(38rem, 100%);
+            text-align: center;
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: clamp(2rem, 1rem + 4vw, 3.5rem);
+            box-shadow: 0 20px 60px rgba(0, 13, 131, 0.12);
+        }
+
+        .logo {
+            width: 96px;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .code {
+            margin: 0;
+            font-size: clamp(4.5rem, 2rem + 12vw, 9rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h1 {
+            margin: 1rem 0 0.75rem;
+            font-size: clamp(1.25rem, 1rem + 1.2vw, 1.75rem);
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0 auto 2rem;
+            max-width: 34ch;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease;
+        }
+
+        .btn-primary {
+            background: var(--gradient-hero);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 13, 131, 0.28);
+        }
+
+        .btn-ghost {
+            border: 2px solid var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        body.dark-mode .btn-ghost {
+            color: var(--secondary-color);
+        }
+
+        .btn:hover,
+        .btn:focus-visible {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus-visible {
+            box-shadow: 0 14px 34px rgba(0, 13, 131, 0.38);
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn {
+                transition: none;
+            }
+
+            .btn:hover,
+            .btn:focus-visible {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <img class="logo" src="img/LOGOS.png" alt="Academia NivelA1" width="96" height="96">
+        <p class="code">404</p>
+        <h1>Esta pagina no existe</h1>
+        <p>El enlace que seguiste puede estar roto o la pagina fue movida. Vuelve al inicio para seguir explorando.</p>
+        <div class="actions">
+            <a class="btn btn-primary" href="/">Ir al inicio</a>
+            <a class="btn btn-ghost" href="/ciclos">Ver ciclos</a>
+        </div>
+    </main>
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+
+</html>
